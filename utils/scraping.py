@@ -6,7 +6,7 @@ from utils.utils import *
 # Pre : the path to of the html document
 # Return a list of squad_members object 
 def scrap_squadron_profile_page(web_page_path):
-    HTMLFileToBeOpened = open(web_page_path, "r")
+    HTMLFileToBeOpened = open(web_page_path, "r",encoding='utf-8') # need to be close ? 
     contents = HTMLFileToBeOpened.read()
     soup = BeautifulSoup(contents, 'html.parser')
 
@@ -31,12 +31,12 @@ def scrap_squadron_profile_page(web_page_path):
 # Return a list containing all the username in the squadron members
 # Pre : the path of the html document (squadron page)
 def list_of_all_members(web_page_path):
-    HTMLFileToBeOpened = open(web_page_path, "r") # need to be close ? 
+    HTMLFileToBeOpened = open(web_page_path, "r",encoding='utf-8') # need to be close ? 
     contents = HTMLFileToBeOpened.read()
     soup = BeautifulSoup(contents, 'html.parser')
 
     squad_members = []
-    html_squad_members_el = soup.find_all('a', href = re.compile(r'https://warthunder.com/fr/community/userinfo/*'))
+    html_squad_members_el = soup.find_all('a', href = re.compile(r'https://warthunder.com/en/community/userinfo/*'))
     for el in html_squad_members_el:
         squad_members.append(el.text.split()[0])
 
