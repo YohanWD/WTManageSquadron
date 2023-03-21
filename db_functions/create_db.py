@@ -26,7 +26,7 @@ def insert_all_squad(db_name, list_squad_members):
             mylist = list(el)
             var_string = ', '.join('?' * len(mylist))
             query_string = f"""INSERT INTO squad_member(squad_num,pseudo,class_perso_esca,current_activity,squad_role,enter_date,
-last_update,prev_activity) VALUES ({var_string});"""
+last_update) VALUES ({var_string});"""
             print(el.role)
             cursor.execute(query_string, mylist)
         
