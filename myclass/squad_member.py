@@ -28,6 +28,9 @@ class Squad_member():
 
     def update_previous_activity(self,activity):
         self.prev_activity = activity
+    
+    def setName(self,name):
+        self.name = name
         
     def __iter__(self):
         return iter([self.number,

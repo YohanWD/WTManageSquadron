@@ -2,11 +2,14 @@ from utils.scraping import *
 import csv
 
 def main():
-	html_file_location = 'tmp_dir/b3m.html'
+	html_file_location = 'tmp_dir/b3m_2023-03-21.html'
 
 	# print(list_of_all_members(html_file_location))
 
-	squad_members = scrap_squadron_profile_page(html_file_location)
+	# squad_members = scrap_squadron_profile_page(html_file_location)
+	
+	squad_members = correct_email_protection(scrap_squadron_profile_page(html_file_location),
+                           list_of_all_members(html_file_location))
 	json_file_location = 'tmp_dir/squad_members.json'
 	write_json_file(json_file_location,squad_members)
 
