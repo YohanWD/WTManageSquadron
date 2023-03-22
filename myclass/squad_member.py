@@ -5,39 +5,49 @@ from json import JSONEncoder
 # Each 3 day a player can have a max number of 360 activity
 # Activity is cap at 3600 (360 x 30day) ???
 #
-class Squad_member():
-
-    #  def __init__(self, number, name, activity, role, enter_date):
-    #     self.name = name
-    #     self.number = imagpart
-    #     self.current_activity = activity
-    #     self.role = role
-    #     self.enter_date = enter_date
-    #     self.update = datetime.now()
+class Squad_member(object):
     
-    def __init__(self, list):
-        # self.id = -1
-        self.number = list[0]
-        self.name = list[1]
-        self.class_perso_esca = list[2] # Classement personnel dans l'escadron
-        self.current_activity = list[3]
-        self.role = list[4]
-        self.enter_date = list[5]
-        self.last_update = None # is automaticly update on database side
-        self.activity_hist = []
+    def __init__(self, id = -1, squad_num = None,
+                 pseudo = None,class_perso_esca = None,current_activity = None,
+                 squad_role = None,enter_date = None, last_update = None, activity_hist = []):
+        self.id = id
+        self.squad_num = squad_num
+        self.pseudo = pseudo
+        self.class_perso_esca = class_perso_esca # Classement personnel dans l'escadron
+        self.current_activity = current_activity
+        self.squad_role = squad_role
+        self.enter_date = enter_date
+        #  ------
+        self.last_update = last_update # is automaticly update on database side
+        self.activity_hist = activity_hist
+    
+    @classmethod
+    def from_db(cls, dic):
+        return cls(id = dic["id"],squad_num = dic["squad_num"],
+                 pseudo = dic["pseudo"],class_perso_esca = dic["class_perso_esca"],current_activity = dic["current_activity"],
+                 squad_role = dic["squad_role"],enter_date = dic["enter_date"], last_update = dic["last_update"])
+
+    @classmethod
+    def from_web_page(cls, list):
+        return cls(squad_num = list[0],
+        pseudo = list[1],
+        class_perso_esca = list[2],
+        current_activity = list[3],
+        squad_role = list[4],
+        enter_date = list[5])
 
     def update_previous_activity(self,activity):
         self.prev_activity = activity
     
-    def setName(self,name):
-        self.name = name
+    def setPseudo(self,pseudo):
+        self.pseudo = pseudo
         
     def __iter__(self):
-        return iter([self.number,
-        self.name,
+        return iter([self.squad_num,
+        self.pseudo,
         self.class_perso_esca,
         self.current_activity,
-        self.role,
+        self.squad_role,
         self.enter_date])
 
 # subclass JSONEncoder

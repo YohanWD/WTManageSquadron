@@ -26,7 +26,7 @@ def scrap_squadron_profile_page(web_page_path):
 
     squad_members = []
     for el in my_list:
-        squad_members.append(Squad_member(el)) # not serialisable
+        squad_members.append(Squad_member.from_web_page(el)) # not serialisable
 
     return squad_members
 
@@ -53,8 +53,8 @@ def correct_email_protection(list_squadron_members,list_squad_members_name):
     cpt = 0
     new_list = []
     for el in list_squadron_members:
-        if el.name == "[email":
-            el.setName(list_squad_members_name[cpt])
+        if el.pseudo == "[email":
+            el.setPseudo(list_squad_members_name[cpt])
         cpt += 1
         
         new_list.append(el)
