@@ -14,7 +14,7 @@ class Squad_member():
     #     self.role = role
     #     self.enter_date = enter_date
     #     self.update = datetime.now()
-
+    
     def __init__(self, list):
         # self.id = -1
         self.number = list[0]
@@ -23,7 +23,7 @@ class Squad_member():
         self.current_activity = list[3]
         self.role = list[4]
         self.enter_date = list[5]
-        self.last_update = str(datetime.now())
+        self.last_update = None # is automaticly update on database side
         self.activity_hist = []
 
     def update_previous_activity(self,activity):
@@ -38,8 +38,7 @@ class Squad_member():
         self.class_perso_esca,
         self.current_activity,
         self.role,
-        self.enter_date,
-        self.last_update])
+        self.enter_date])
 
 # subclass JSONEncoder
 class squad_member_encoder(JSONEncoder):
