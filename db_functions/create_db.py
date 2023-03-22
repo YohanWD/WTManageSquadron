@@ -22,6 +22,7 @@ def insert_all_squad(db_name, list_squad_members):
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
         print("Connection is established")
+        # con.executemany("insert into person(firstname, lastname) values (?, ?)", persons)
         for el in list_squad_members:
             mylist = list(el)
             var_string = ', '.join('?' * len(mylist))
@@ -57,4 +58,30 @@ def update_squad_members_activity(db_name, list_squad_members):
         print(e)
     finally:
         con.close()
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+def get_all_squad_members(db_name):
+    squad_members_list = []
+    try:
+        con = sqlite3.connect(db_name)
+        con.row_factory = dict_factory
+        cursor = con.cursor()
+        print("Connection is established")
+        cursor.execute('SELECT * from  squad_member')
+        rows = cursor.fetchall()
+        for r in rows:
+            squad_members_list.append(Squad_member.from_db(r))
+
+    except Error as e:
+        print(e)
+    finally:
+        con.close()
+    
+    return squad_members_list
+    
 
