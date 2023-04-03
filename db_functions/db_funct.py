@@ -95,10 +95,9 @@ def get_all_squad_members_with_activity(db_name):
 
         cpt = 0
         for member in squad_members_list:
-            cursor.execute('SELECT * from activity_history where squad_member_id = ?',(member.id,))
+            cursor.execute('SELECT * from activity_history where squad_member_id = ? ORDER BY last_update',(member.id,))
             rows = cursor.fetchall()
             for r in rows:
-                # print(r)
                 squad_members_list[cpt].appendActivity(r)
             
             cpt +=1
