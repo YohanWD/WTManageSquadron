@@ -51,7 +51,7 @@ END;
 
 
 CREATE TRIGGER IF NOT EXISTS update_activity_after_update_squadron_members 
-   AFTER UPDATE 
+   AFTER UPDATE OF 'current_activity'
    ON squad_member
 BEGIN
  INSERT INTO activity_history (activity,last_update,squad_member_id)
@@ -62,6 +62,6 @@ END;
 ---------------------------------
 
 ---------- TEST INSERT/UPDATE ----------
-INSERT INTO squad_member(squad_num,pseudo,class_perso_esca,current_activity,squad_role,enter_date) VALUES(1,'test',0,10,'Private','2023-01-25');
-UPDATE squad_member set current_activity=100 where id=1;
+-- INSERT INTO squad_member(squad_num,pseudo,class_perso_esca,current_activity,squad_role,enter_date) VALUES(1,'test',0,10,'Private','2023-01-25');
+-- UPDATE squad_member set current_activity=100 where id=1;
 ---------------------------------

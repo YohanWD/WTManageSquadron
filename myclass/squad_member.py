@@ -19,7 +19,7 @@ class Squad_member(object):
         self.enter_date = enter_date
         #  ------
         self.last_update = last_update # is automaticly update on database side
-        self.activity_hist = activity_hist
+        self.activity_hist = []
     
     @classmethod
     def from_db(cls, dic):
@@ -41,6 +41,9 @@ class Squad_member(object):
     
     def setPseudo(self,pseudo):
         self.pseudo = pseudo
+    
+    def appendActivity(self,el):
+        self.activity_hist.append(el)
         
     def __iter__(self):
         return iter([self.squad_num,
