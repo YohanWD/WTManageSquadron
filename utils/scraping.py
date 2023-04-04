@@ -61,19 +61,20 @@ def correct_email_protection(list_squadron_members,list_squad_members_name):
     
     return new_list
 
-# Download the page in a html file
-#
-#
-def download_web_page(url):
-    path_of_file = "tmp_dir/b3m_" + str(datetime.today().strftime('%Y-%m-%d')) + ".html"
+# Download the page, inside the specified file 
+# Doesn't download page if file already exist
+# VARS
+# ULR = the url link to dowload html code from
+# html_file_path = the path to dump html code in the file
+# POST : return True if the page is downloaded, False otherwise
+def download_web_page(url,html_file_path):
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-
     try:
         response = requests.get(url, headers=headers)
-        # print(response.content)
-        with open(path_of_file,"wb") as f:
+        with open(html_file_path,"wb") as f:
             f.write(response.content)
     except Exception as e:
         print(e)
+        return False
     
-    return path_of_file
+    return True
