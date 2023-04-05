@@ -108,3 +108,21 @@ def get_all_squad_members_with_activity(db_name):
         con.close()
     
     return squad_members_list
+
+
+def delete_list_of_members(db_name,list_squad_members):
+    try:
+        con = sqlite3.connect(db_name)
+        cursor = con.cursor()
+        print("Connection is established")
+        for el in list_squad_members:
+            query_string = """Delete from squad_member
+                where id=?;"""
+
+            cursor.execute(query_string, el.id)
+
+        con.commit()
+    except Error as e:
+        print(e)
+    finally:
+        con.close()
