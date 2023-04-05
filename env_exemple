@@ -1,0 +1,9 @@
+# Discord
+DISCORD_WEBHOOK_URL = 
+
+# Squadron
+SQUADRON_URL=
+SQUAD_NAME=
+
+# DB RELATED
+DB_NAME=squadron.db
