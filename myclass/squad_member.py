@@ -52,7 +52,12 @@ class Squad_member(object):
         self.current_activity,
         self.squad_role,
         self.enter_date])
-
+    
+    def __eq__(self, other):
+        return self.pseudo == other.pseudo
+    
+    def __hash__(self):
+        return hash(tuple(self))
 # subclass JSONEncoder
 class squad_member_encoder(JSONEncoder):
     def default(self, o):

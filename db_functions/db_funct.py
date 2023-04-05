@@ -49,13 +49,13 @@ def update_squad_members_activity(db_name, list_squad_members):
         for el in list_squad_members:
             query_string = """UPDATE squad_member
                 set current_activity=?
-                where id=?;"""
+                where id=?"""
 
-            cursor.execute(query_string, el.current_activity,el.id)
+            cursor.execute(query_string, (el.current_activity,el.id))
 
         con.commit()
     except Error as e:
-        print(e)
+        print("Error during update ",e)
     finally:
         con.close()
 
@@ -117,12 +117,12 @@ def delete_list_of_members(db_name,list_squad_members):
         print("Connection is established")
         for el in list_squad_members:
             query_string = """Delete from squad_member
-                where id=?;"""
+                where id=?"""
 
-            cursor.execute(query_string, el.id)
+            cursor.execute(query_string, (el.id,))
 
         con.commit()
     except Error as e:
-        print(e)
+        print("Error during members deletion : ", e)
     finally:
         con.close()
