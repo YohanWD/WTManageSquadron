@@ -37,3 +37,34 @@ def send_discord_notif(webhook_url, message):
         webhook.send(message)
     except Exception as e:
         print("Error during message sending to discord : ", e)
+
+# Fonction to compare 2 list of squad members
+# POST : return a tuple of 3 list of squad_members
+# toCreate = list of new user that need to be added to database
+# toUpdate = list of user to update activity in database
+# squadleaver = list of user to delete from the database
+# Maybe redo the function there is a better method
+def compare_squads_members(list1,list2):
+    # EX : list1 = [1,2,3,4,5]
+    # list2 = [1,2,3,4,6]
+    # output:  toCreate=[6], toUpdate = [1,2,3,4], squadLeaver = [5]
+    # squadLeaver = list(set(list1) - set(list2))
+    
+    # toCreate  = list(set(list2) - set(list1))
+    # print("to create", toCreate)
+    # print("to update", toUpdate)
+    # print("to delete",squadLeaver)
+
+    squadLeaver = []
+    for element in list1:
+        if element not in list2:
+            squadLeaver.append(element)
+
+    toCreate = []
+    for element in list2:
+        if element not in list1:
+            toCreate.append(element)
+    
+    toUpdate = list(set(list1) - set(squadLeaver))
+
+    return toCreate,toUpdate,squadLeaver
