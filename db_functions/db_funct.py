@@ -126,3 +126,22 @@ def delete_list_of_members(db_name,list_squad_members):
         print("Error during members deletion : ", e)
     finally:
         con.close()
+
+def get_activity_history_from_members(db_name, members_id):
+    mylist = []
+    try:
+        con = sqlite3.connect(db_name)
+        cursor = con.cursor()
+        print("Connection is established")
+        query_string = """select activity,last_update from activity_history
+            where squad_member_id=?"""
+
+        cursor.execute(query_string, (members_id,))
+        mylist = cursor.fetchall()
+
+    except Error as e:
+        print("Error during members deletion : ", e)
+    finally:
+        con.close()    
+    
+    return mylist

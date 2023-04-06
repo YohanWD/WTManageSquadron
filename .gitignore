@@ -132,3 +132,4 @@ dmypy.json
 tmp_dir
 test.py
 *.db
+.DS_STORE
