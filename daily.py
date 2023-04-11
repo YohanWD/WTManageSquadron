@@ -19,7 +19,7 @@ def main():
     
     squad_url = os.getenv('SQUADRON_URL')
     squad_name = os.getenv('SQUAD_NAME')
-    db_name = 'test.db' # os.getenv('DB_NAME')
+    db_name = os.getenv('DB_NAME')
     discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
 
     already_updated = False
@@ -53,7 +53,7 @@ def main():
     for el in get_all_squad_members(db_name):
         if check_if_members_is_inactive(el):
             msg = f"The following members {el.pseudo} is inactive for more than 3 weeks"
-            send_discord_notif(discord_webhook_url,msg) # exluce new player ?
+            send_discord_notif(discord_webhook_url,msg) # exclude new player ?
     
     # Generate graph
     for el in get_all_squad_members(db_name):
