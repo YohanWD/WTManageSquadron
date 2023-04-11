@@ -65,6 +65,6 @@ def compare_squads_members(list1,list2):
         if element not in list1:
             toCreate.append(element)
     
-    toUpdate = list(set(list1) - set(squadLeaver))
-
+    toUpdate = list(set(list2) - set(toCreate))
+    
     return toCreate,toUpdate,squadLeaver
