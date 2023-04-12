@@ -2,18 +2,21 @@ import sqlite3
 from myclass.squad_member import Squad_member
 from sqlite3 import Error
 
+import logging
+logger = logging.getLogger(__name__)
+
 # create a new database based on sql script
 def create_db_schema(db_name, script_path):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        print("Connection is established")
+        logger.info("Connection is established to create db schema")
         with open(script_path, 'r') as sql_file:
             sql_script = sql_file.read()
         cursor.executescript(sql_script)
         
     except Error as e:
-        print(e)
+        logger.error(f'Db error in fct create_db_schema : {str(e)}')
     finally:
         con.close()
 
@@ -21,7 +24,7 @@ def insert_all_squad(db_name, list_squad_members):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        print("Connection is established")
+        logger.info("Connection is established to insert all squad_members")
         # con.executemany("insert into person(firstname, lastname) values (?, ?)", persons)
         for el in list_squad_members:
             mylist = list(el)
@@ -32,7 +35,7 @@ def insert_all_squad(db_name, list_squad_members):
         
         con.commit()
     except Error as e:
-        print(e)
+        logger.error(f'Db error in fct insert_all_squad : {str(e)}')
     finally:
         con.close()
 
@@ -42,20 +45,21 @@ def insert_all_squad(db_name, list_squad_members):
 # db_name : the name of the db to update row
 # list_squad_members : a list of squad_members
 def update_squad_members_activity(db_name, list_squad_members):
+    
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        print("Connection is established")
+        logger.info("Connection is established. Updating squad_members")
         for el in list_squad_members:
             query_string = """UPDATE squad_member
                 set current_activity=?
-                where id=?"""
+                where pseudo=?"""
 
-            cursor.execute(query_string, (el.current_activity,el.id))
+            cursor.execute(query_string, (el.current_activity,el.pseudo))
 
         con.commit()
     except Error as e:
-        print("Error during update ",e)
+        logger.error(f'Db error in fct update_squad_members_activity : {str(e)}')
     finally:
         con.close()
 
@@ -71,14 +75,14 @@ def get_all_squad_members(db_name):
         con = sqlite3.connect(db_name)
         con.row_factory = dict_factory
         cursor = con.cursor()
-        print("Connection is established")
+        logger.info("Connection is established to get all squad members")
         cursor.execute('SELECT * from  squad_member')
         rows = cursor.fetchall()
         for r in rows:
             squad_members_list.append(Squad_member.from_db(r))
 
     except Error as e:
-        print(e)
+        logger.error(f'Db error in fct get_all_squad_members : {str(e)}')
     finally:
         con.close()
     
@@ -91,7 +95,7 @@ def get_all_squad_members_with_activity(db_name):
         con = sqlite3.connect(db_name)
         con.row_factory = dict_factory
         cursor = con.cursor()
-        print("Connection is established")
+        logger.info("Connection to db is established to get squad_members_activity")
 
         cpt = 0
         for member in squad_members_list:
@@ -103,7 +107,7 @@ def get_all_squad_members_with_activity(db_name):
             cpt +=1
 
     except Error as e:
-        print(e)
+        logger.error(f'Db error in fct get_all_squad_members_with_activity : {str(e)}')
     finally:
         con.close()
     
@@ -114,7 +118,7 @@ def delete_list_of_members(db_name,list_squad_members):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        print("Connection is established")
+        logger.info("Connection is established to delete squad members")
         for el in list_squad_members:
             query_string = """Delete from squad_member
                 where id=?"""
@@ -123,6 +127,25 @@ def delete_list_of_members(db_name,list_squad_members):
 
         con.commit()
     except Error as e:
-        print("Error during members deletion : ", e)
+        logger.error(f'Db error in fct delete_list_of_members : {str(e)}')
     finally:
         con.close()
+
+def get_activity_history_from_members(db_name, members_id):
+    mylist = []
+    try:
+        con = sqlite3.connect(db_name)
+        cursor = con.cursor()
+        logger.info("Connection is established to get activity from a member")
+        query_string = """select activity,last_update from activity_history
+            where squad_member_id=?"""
+
+        cursor.execute(query_string, (members_id,))
+        mylist = cursor.fetchall()
+
+    except Error as e:
+        logger.error(f'Db error in fct get_activity_history_from_members : {str(e)}')
+    finally:
+        con.close()    
+    
+    return mylist

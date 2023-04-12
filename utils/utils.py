@@ -1,5 +1,5 @@
 from myclass.squad_member import Squad_member, squad_member_encoder
-import csv,json
+import csv,json,os,re
 
 # Remove first n first element of a list
 def divide_chunks(l, n):
@@ -21,3 +21,9 @@ def write_json_file(file_path,data):
     with open(file_path, 'w') as f:
         for el in data :
             json.dump(el, f,ensure_ascii=False, indent=4, cls=squad_member_encoder)
+
+# Delete all file matching a certain patern execpt the exclusion_file_name
+def purge(dir, pattern, exlusion_file_name):
+    for f in os.listdir(dir):
+        if re.search(pattern, f) != None and f != exlusion_file_name:
+            os.remove(os.path.join(dir, f))
