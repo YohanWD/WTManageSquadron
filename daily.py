@@ -22,6 +22,13 @@ def main():
     db_name = os.getenv('DB_NAME')
     discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
 
+    # Checking if we need to create the database
+    if os.path.exists(db_name) == False:
+        create_db_schema(db_name,'db_functions/schema.sql')
+        print('New db is initialised')
+    else:
+        print('No need to create DB')
+
     already_updated = False
     # Download the page if wasn't downloaded
     html_file_name = squad_name + "_" + str(datetime.today().strftime('%Y-%m-%d')) + ".html"
@@ -48,31 +55,31 @@ def main():
         update_squad_members_activity(db_name,list_to_update)
         insert_all_squad(db_name,list_create_squad)
         delete_list_of_members(db_name,list_leaver) # Keep an history somewhere ? # TODO#TOTHINK
+
+        # Generate graph
+        for el in get_all_squad_members(db_name):
+            history_list = get_activity_history_from_members(db_name, el.id)
+            x_list = []
+            y_list = []
+            for elem1, elem2 in history_list:
+                x_list.append(datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S'))
+                y_list.append(elem1)
+
+            plt.clf()
+            plt.xlabel('x - time')
+            plt.ylabel('y - activity')
+            plt.plot(x_list, y_list, color='green', linestyle='dashed', linewidth = 3,
+                    marker='o', markerfacecolor='blue', markersize=12)
+
+            plt.gcf().autofmt_xdate()
+            plt.title(f'Activity plot for {el.pseudo}')
+            plt.savefig(f'tmp_dir/graph/{el.pseudo}.png')
     
     # Check if we need to warn inactive members
     for el in get_all_squad_members(db_name):
         if check_if_members_is_inactive(el):
             msg = f"The following members {el.pseudo} is inactive for more than 3 weeks"
             send_discord_notif(discord_webhook_url,msg) # exclude new player ?
-    
-    # Generate graph
-    for el in get_all_squad_members(db_name):
-        history_list = get_activity_history_from_members(db_name, el.id)
-        x_list = []
-        y_list = []
-        for elem1, elem2 in history_list:
-            x_list.append(datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S'))
-            y_list.append(elem1)
-
-        plt.clf()
-        plt.xlabel('x - time')
-        plt.ylabel('y - activity')
-        plt.plot(x_list, y_list, color='green', linestyle='dashed', linewidth = 3,
-                marker='o', markerfacecolor='blue', markersize=12)
-
-        plt.gcf().autofmt_xdate()
-        plt.title(f'Activity plot for {el.pseudo}')
-        plt.savefig(f'tmp_dir/graph/{el.pseudo}.png')
 
     # Delete old HTML file
     purge('tmp_dir',f"{squad_name}_.*.html",html_file_name)

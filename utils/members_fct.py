@@ -48,12 +48,6 @@ def compare_squads_members(list1,list2):
     # EX : list1 = [1,2,3,4,5]
     # list2 = [1,2,3,4,6]
     # output:  toCreate=[6], toUpdate = [1,2,3,4], squadLeaver = [5]
-    # squadLeaver = list(set(list1) - set(list2))
-    
-    # toCreate  = list(set(list2) - set(list1))
-    # print("to create", toCreate)
-    # print("to update", toUpdate)
-    # print("to delete",squadLeaver)
 
     squadLeaver = []
     for element in list1:
