@@ -21,6 +21,8 @@ def main():
     squad_name = os.getenv('SQUAD_NAME')
     db_name = os.getenv('DB_NAME')
     discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
+    path_to_save_graph = os.getenv('path_to_save_graph')
+    path_to_save_html = os.getenv('path_to_save_html_file')
 
     # Checking if we need to create the database
     if os.path.exists(db_name) == False:
@@ -32,7 +34,7 @@ def main():
     already_updated = False
     # Download the page if wasn't downloaded
     html_file_name = squad_name + "_" + str(datetime.today().strftime('%Y-%m-%d')) + ".html"
-    html_file_path = "tmp_dir/" + html_file_name
+    html_file_path = path_to_save_html + "/" + html_file_name
     if os.path.exists(html_file_path) == False:
         if download_web_page(squad_url,html_file_path) == False:
             logging.info("Error during the page download")
@@ -76,7 +78,7 @@ def main():
             plt.plot_date(x_list,y_list,color='green', linestyle='-', linewidth = 2,
                 markerfacecolor='blue', markersize=7)
             plt.title(f'Activity history of {el.pseudo}')
-            plt.savefig(f'tmp_dir/graph/{el.pseudo}.png')
+            plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
     
     # Check if we need to warn inactive members
     for el in get_all_squad_members(db_name):

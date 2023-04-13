@@ -24,6 +24,10 @@ SQUAD_NAME= # Your squadron name
 
 # DB RELATED
 DB_NAME=squadron.db # A name to give to the database where all your squadron information will be stored
+
+# Path to save file
+path_to_save_html_file= # full path and must exist (don't add / at the end)
+path_to_save_graph= # full path and must exist (don't add / at the end)
 ```
 
 ## How to use

@@ -7,3 +7,7 @@ SQUAD_NAME=
 
 # DB RELATED
 DB_NAME=squadron.db
+
+# Path to save file
+path_to_save_html_file=
+path_to_save_graph=
