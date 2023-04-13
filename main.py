@@ -62,17 +62,20 @@ def main():
             x_list = []
             y_list = []
             for elem1, elem2 in history_list:
-                x_list.append(datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S'))
+                tmptime = datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S')
+                x_list.append(tmptime.strftime('%Y-%m-%d'))
                 y_list.append(elem1)
 
             plt.clf()
             plt.xlabel('x - time')
             plt.ylabel('y - activity')
-            plt.plot(x_list, y_list, color='green', linestyle='dashed', linewidth = 3,
-                    marker='o', markerfacecolor='blue', markersize=12)
-
+            plt.ylim(0, 4000)
+            for i in range(len(x_list)):
+                plt.annotate(y_list[i], xy=(i, y_list[i]),xytext=(-12.5,7), textcoords='offset points')
             plt.gcf().autofmt_xdate()
-            plt.title(f'Activity plot for {el.pseudo}')
+            plt.plot_date(x_list,y_list,color='green', linestyle='-', linewidth = 2,
+                markerfacecolor='blue', markersize=7)
+            plt.title(f'Activity history of {el.pseudo}')
             plt.savefig(f'tmp_dir/graph/{el.pseudo}.png')
     
     # Check if we need to warn inactive members
