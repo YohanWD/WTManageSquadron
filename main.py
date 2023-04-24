@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 def main():
-    # Get variable from environnement
-    logging.basicConfig(filename='logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+    logging.basicConfig(filename='logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+    # Get variable from environnement
     res = load_dotenv(dotenv_path='.env')
     if res == False:
         logging.critical("Create .env file before running the script! See README.md")
@@ -65,9 +65,9 @@ def main():
             y_list = []
             for elem1, elem2 in history_list:
                 tmptime = datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S')
-                x_list.append(tmptime.strftime('%Y-%m-%d'))
+                x_list.append(datetime.strptime(tmptime.strftime('%Y-%m-%d'),'%Y-%m-%d'))
                 y_list.append(elem1)
-
+                
             plt.clf()
             plt.xlabel('x - time')
             plt.ylabel('y - activity')
@@ -76,7 +76,7 @@ def main():
                 plt.annotate(y_list[i], xy=(i, y_list[i]),xytext=(-12.5,7), textcoords='offset points')
             plt.gcf().autofmt_xdate()
             plt.plot_date(x_list,y_list,color='green', linestyle='-', linewidth = 2,
-                markerfacecolor='blue', markersize=7)
+                markerfacecolor='blue', markersize=7,xdate=True)
             plt.title(f'Activity history of {el.pseudo}')
             plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
     
