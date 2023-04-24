@@ -27,7 +27,7 @@ def main():
 
     # Checking if we need to create the database
     if os.path.exists(db_name) == False:
-        create_db_schema(db_name,'db_functions/schema.sql')
+        create_db_schema(db_name,dir_path+'/db_functions/schema.sql')
         print('New db is initialised')
     else:
         print('No need to create DB')
