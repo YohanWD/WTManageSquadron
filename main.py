@@ -9,10 +9,11 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 def main():
-    logging.basicConfig(filename='logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-
+    dir_path = os.path.dirname(os.path.realpath(__file__))
     # Get variable from environnement
-    res = load_dotenv(dotenv_path='.env')
+    logging.basicConfig(filename=dir_path+'/logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
+    res = load_dotenv(dotenv_path=dir_path+'/.env')
     if res == False:
         logging.critical("Create .env file before running the script! See README.md")
         sys.exit(0)
@@ -87,7 +88,7 @@ def main():
             send_discord_notif(discord_webhook_url,msg) # exclude new player ?
 
     # Delete old HTML file
-    purge(path_to_save_html',f"{squad_name}_.*.html",html_file_name)
+    purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
     
 if __name__=="__main__":
     main()
