@@ -87,7 +87,7 @@ def main():
             send_discord_notif(discord_webhook_url,msg) # exclude new player ?
 
     # Delete old HTML file
-    purge('tmp_dir',f"{squad_name}_.*.html",html_file_name)
+    purge(path_to_save_html',f"{squad_name}_.*.html",html_file_name)
     
 if __name__=="__main__":
     main()
