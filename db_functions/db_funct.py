@@ -10,7 +10,7 @@ def create_db_schema(db_name, script_path):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        logger.info("Connection is established to create db schema")
+        logger.debug("Connection is established to create db schema")
         with open(script_path, 'r') as sql_file:
             sql_script = sql_file.read()
         cursor.executescript(sql_script)
@@ -24,7 +24,7 @@ def insert_all_squad(db_name, list_squad_members):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        logger.info("Connection is established to insert all squad_members")
+        logger.debug("Connection is established to insert all squad_members")
         # con.executemany("insert into person(firstname, lastname) values (?, ?)", persons)
         for el in list_squad_members:
             mylist = list(el)
@@ -49,7 +49,7 @@ def update_squad_members_activity(db_name, list_squad_members):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        logger.info("Connection is established. Updating squad_members")
+        logger.debug("Connection is established. Updating squad_members")
         for el in list_squad_members:
             query_string = """UPDATE squad_member
                 set current_activity=?
@@ -75,7 +75,7 @@ def get_all_squad_members(db_name):
         con = sqlite3.connect(db_name)
         con.row_factory = dict_factory
         cursor = con.cursor()
-        logger.info("Connection is established to get all squad members")
+        logger.debug("Connection is established to get all squad members")
         cursor.execute('SELECT * from  squad_member')
         rows = cursor.fetchall()
         for r in rows:
@@ -95,7 +95,7 @@ def get_all_squad_members_with_activity(db_name):
         con = sqlite3.connect(db_name)
         con.row_factory = dict_factory
         cursor = con.cursor()
-        logger.info("Connection to db is established to get squad_members_activity")
+        logger.debug("Connection to db is established to get squad_members_activity")
 
         cpt = 0
         for member in squad_members_list:
@@ -118,7 +118,7 @@ def delete_list_of_members(db_name,list_squad_members):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        logger.info("Connection is established to delete squad members")
+        logger.debug("Connection is established to delete squad members")
         for el in list_squad_members:
             query_string = """Delete from squad_member
                 where id=?"""
@@ -136,7 +136,7 @@ def get_activity_history_from_members(db_name, members_id):
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
-        logger.info("Connection is established to get activity from a member")
+        logger.debug("Connection is established to get activity from a member")
         query_string = """select activity,last_update from activity_history
             where squad_member_id=?"""
 

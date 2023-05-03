@@ -9,10 +9,11 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 def main():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
     # Get variable from environnement
-    logging.basicConfig(filename='logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+    logging.basicConfig(filename=dir_path+'/logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
-    res = load_dotenv(dotenv_path='.env')
+    res = load_dotenv(dotenv_path=dir_path+'/.env')
     if res == False:
         logging.critical("Create .env file before running the script! See README.md")
         sys.exit(0)
@@ -21,10 +22,12 @@ def main():
     squad_name = os.getenv('SQUAD_NAME')
     db_name = os.getenv('DB_NAME')
     discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
+    path_to_save_graph = os.getenv('path_to_save_graph')
+    path_to_save_html = os.getenv('path_to_save_html_file')
 
     # Checking if we need to create the database
     if os.path.exists(db_name) == False:
-        create_db_schema(db_name,'db_functions/schema.sql')
+        create_db_schema(db_name,dir_path+'/db_functions/schema.sql')
         print('New db is initialised')
     else:
         print('No need to create DB')
@@ -32,7 +35,7 @@ def main():
     already_updated = False
     # Download the page if wasn't downloaded
     html_file_name = squad_name + "_" + str(datetime.today().strftime('%Y-%m-%d')) + ".html"
-    html_file_path = "tmp_dir/" + html_file_name
+    html_file_path = path_to_save_html + "/" + html_file_name
     if os.path.exists(html_file_path) == False:
         if download_web_page(squad_url,html_file_path) == False:
             logging.info("Error during the page download")
@@ -62,18 +65,21 @@ def main():
             x_list = []
             y_list = []
             for elem1, elem2 in history_list:
-                x_list.append(datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S'))
+                tmptime = datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S')
+                x_list.append(datetime.strptime(tmptime.strftime('%Y-%m-%d'),'%Y-%m-%d'))
                 y_list.append(elem1)
-
+                
             plt.clf()
             plt.xlabel('x - time')
             plt.ylabel('y - activity')
-            plt.plot(x_list, y_list, color='green', linestyle='dashed', linewidth = 3,
-                    marker='o', markerfacecolor='blue', markersize=12)
-
+            plt.ylim(0, 4000)
+            for i in range(len(x_list)):
+                plt.annotate(y_list[i], xy=(i, y_list[i]),xytext=(-12.5,7), textcoords='offset points')
             plt.gcf().autofmt_xdate()
-            plt.title(f'Activity plot for {el.pseudo}')
-            plt.savefig(f'tmp_dir/graph/{el.pseudo}.png')
+            plt.plot_date(x_list,y_list,color='green', linestyle='-', linewidth = 2,
+                markerfacecolor='blue', markersize=7,xdate=True)
+            plt.title(f'Activity history of {el.pseudo}')
+            plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
     
     # Check if we need to warn inactive members
     for el in get_all_squad_members(db_name):
@@ -82,7 +88,7 @@ def main():
             send_discord_notif(discord_webhook_url,msg) # exclude new player ?
 
     # Delete old HTML file
-    purge('tmp_dir',f"{squad_name}_.*.html",html_file_name)
+    purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
     
 if __name__=="__main__":
     main()
