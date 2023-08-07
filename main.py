@@ -12,7 +12,6 @@ from datetime import datetime
 
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-
     res = load_dotenv(dotenv_path=dir_path+'/.env')
     if res == False:
         logging.critical("Create .env file before running the script! See README.md")
@@ -113,6 +112,6 @@ def main():
     log_handler.doRollover()
     
     sys.exit(0)
-    
+
 if __name__=="__main__":
     main()
