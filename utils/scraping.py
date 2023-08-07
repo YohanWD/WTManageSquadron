@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import re
-from utils.utils import *
-from datetime import datetime
+from utils import utils
+from myclass.squad_member import Squad_member
 import requests
 
 # Function that scrap War thunder squadron html page
@@ -22,7 +22,7 @@ def scrap_squadron_profile_page(web_page_path):
     for el2 in tmp_el:
         list_tmp.append(el2.text.split()[0])
 
-    my_list = list(divide_chunks(list_tmp[6:], 6))
+    my_list = list(utils.divide_chunks(list_tmp[6:], 6))
 
     squad_members = []
     for el in my_list:

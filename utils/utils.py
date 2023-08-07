@@ -1,4 +1,4 @@
-from myclass.squad_member import Squad_member, squad_member_encoder
+from myclass.squad_member import squad_member_encoder
 import csv,json,os,re
 
 # Remove first n first element of a list
