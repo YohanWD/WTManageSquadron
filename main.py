@@ -74,8 +74,14 @@ def main():
         list_create_squad, list_to_update, list_leaver  = members_fct.compare_squads_members(db_squad_list,new_squad_members_list)
 
         db_funct.update_squad_members_activity(db_name,list_to_update)
+        
+        # Inserting/deleting members to DB + notifaction to discord
         db_funct.insert_all_squad(db_name,list_create_squad)
+        for el in list_create_squad:
+            utils.send_discord_notif(discord_webhook_url,f"A new member has joined squadron ! Welcome {el.pseudo}")
         db_funct.delete_list_of_members(db_name,list_leaver) # Keep an history somewhere ? # TODO#TOTHINK
+        for el in list_leaver:
+            utils.send_discord_notif(discord_webhook_url,f"A member has left squadron ! Bye bye {el.pseudo}")
 
         # Generate graph
         for el in db_funct.get_all_squad_members(db_name):
@@ -102,7 +108,7 @@ def main():
     # Check if we need to warn inactive members
     for el in db_funct.get_all_squad_members(db_name):
         if members_fct.check_if_members_is_inactive(el):
-            msg = f"The following members {el.pseudo} is inactive for more than 3 weeks"
+            msg = f"This members : {el.pseudo} is inactive for more than 3 weeks"
             utils.send_discord_notif(discord_webhook_url,msg) # exclude new player ?
 
     # Delete old HTML file
