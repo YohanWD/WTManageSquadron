@@ -1,33 +1,51 @@
 from utils.scraping import *
-import logging, sys, os, glob
+import logging, sys, os
+import logging.handlers
 from dotenv import load_dotenv
 
-from db_functions.db_funct import *
-from utils.members_fct import *
+from db_functions import db_funct
+
+from utils import members_fct,scraping,utils
 
 import matplotlib.pyplot as plt
 from datetime import datetime
 
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    # Get variable from environnement
-    logging.basicConfig(filename=dir_path+'/logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-
     res = load_dotenv(dotenv_path=dir_path+'/.env')
     if res == False:
         logging.critical("Create .env file before running the script! See README.md")
         sys.exit(0)
     
-    squad_url = os.getenv('SQUADRON_URL')
-    squad_name = os.getenv('SQUAD_NAME')
-    db_name = os.getenv('DB_NAME')
-    discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
-    path_to_save_graph = os.getenv('path_to_save_graph')
-    path_to_save_html = os.getenv('path_to_save_html_file')
+    try: 
+        squad_url = os.environ['SQUADRON_URL']
+        squad_name = os.environ['SQUAD_NAME']
+        db_name = os.environ['DB_NAME']
+        discord_webhook_url = os.environ['DISCORD_WEBHOOK_URL']
+        path_to_save_graph = os.environ['path_to_save_graph']
+        path_to_save_html = os.environ['path_to_save_html_file']
+        
+        log_file_path = os.environ['LOGFILE_LOCATION']
+        NB_OF_LOG_FILE = int(os.environ['NB_OF_LOG_FILE'])
+    except Exception as e:
+        msg = f"One or more env variable are not set, please verify following variable : {e}"
+        print(msg)
+        exit(0)
+
+    # Get variable from environnement
+    log_handler = logging.handlers.RotatingFileHandler(log_file_path, mode='w', backupCount=NB_OF_LOG_FILE)
+    log_handler.rotator = utils.rotator
+    log_handler.namer = utils.namer
+    FORMAT = logging.Formatter('%(asctime)-15s %(levelname)s --- %(message)s')
+    log_handler.setFormatter(FORMAT)
+
+    my_logger = logging.getLogger()
+    my_logger.setLevel(logging.DEBUG)
+    my_logger.addHandler(log_handler)
 
     # Checking if we need to create the database
     if os.path.exists(db_name) == False:
-        create_db_schema(db_name,dir_path+'/db_functions/schema.sql')
+        db_funct.create_db_schema(db_name,dir_path+'/db_functions/schema.sql')
         print('New db is initialised')
     else:
         print('No need to create DB')
@@ -49,19 +67,25 @@ def main():
     # Update database
     if already_updated == False:
         # Scrap the page
-        new_squad_members_list = correct_email_protection(scrap_squadron_profile_page(html_file_path),
-                            list_of_all_members(html_file_path))
+        new_squad_members_list = scraping.correct_email_protection(scraping.scrap_squadron_profile_page(html_file_path),
+                            scraping.list_of_all_members(html_file_path))
         # Compare with data in database
-        db_squad_list = get_all_squad_members(db_name)
-        list_create_squad, list_to_update, list_leaver  = compare_squads_members(db_squad_list,new_squad_members_list)
+        db_squad_list = db_funct.get_all_squad_members(db_name)
+        list_create_squad, list_to_update, list_leaver  = members_fct.compare_squads_members(db_squad_list,new_squad_members_list)
 
-        update_squad_members_activity(db_name,list_to_update)
-        insert_all_squad(db_name,list_create_squad)
-        delete_list_of_members(db_name,list_leaver) # Keep an history somewhere ? # TODO#TOTHINK
+        db_funct.update_squad_members_activity(db_name,list_to_update)
+        
+        # Inserting/deleting members to DB + notifaction to discord
+        db_funct.insert_all_squad(db_name,list_create_squad)
+        for el in list_create_squad:
+            members_fct.send_discord_notif(discord_webhook_url,f"A new member has joined squadron ! Welcome {el.pseudo}")
+        db_funct.delete_list_of_members(db_name,list_leaver) # Keep an history somewhere ? # TODO#TOTHINK
+        for el in list_leaver:
+            members_fct.send_discord_notif(discord_webhook_url,f"A member has left squadron ! Bye bye {el.pseudo}")
 
         # Generate graph
-        for el in get_all_squad_members(db_name):
-            history_list = get_activity_history_from_members(db_name, el.id)
+        for el in db_funct.get_all_squad_members(db_name):
+            history_list = db_funct.get_activity_history_from_members(db_name, el.id)
             x_list = []
             y_list = []
             for elem1, elem2 in history_list:
@@ -82,13 +106,18 @@ def main():
             plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
     
     # Check if we need to warn inactive members
-    for el in get_all_squad_members(db_name):
-        if check_if_members_is_inactive(el):
-            msg = f"The following members {el.pseudo} is inactive for more than 3 weeks"
-            send_discord_notif(discord_webhook_url,msg) # exclude new player ?
+    for el in db_funct.get_all_squad_members_with_activity(db_name):
+        if members_fct.check_if_members_is_inactive(el):
+            msg = f"This members : {el.pseudo} is inactive for more than 3 weeks"
+            members_fct.send_discord_notif(discord_webhook_url,msg) # exclude new player ?
 
     # Delete old HTML file
-    purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
+    utils.purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
     
+    # Rotate the log
+    log_handler.doRollover()
+    
+    sys.exit(0)
+
 if __name__=="__main__":
     main()

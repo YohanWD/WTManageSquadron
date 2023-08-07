@@ -1,4 +1,5 @@
 from discord import SyncWebhook
+from myclass.activity import Activity
 
 # Revoir la fonction surement
 # Info : Fonction qui renvoie
@@ -14,16 +15,17 @@ def check_if_members_is_inactive(members):
 
     sevenDayCounter = 0
     weekInactive = 0
-
-    for activity in members.activity_hist:
-        if weekInactive == 3:
+    
+    for activity_obj in members.activity_hist:        
+        if weekInactive >= 3:
             isInactive = True
-        if sevenDayCounter == 7:
+
+        if sevenDayCounter != 0 and (sevenDayCounter % 7) == 0:
             # Le joueuer est inactif depuis 1 semaine
             # Envoie d'une alerte
             weekInactive +=1
 
-        if activity == 0:
+        if activity_obj.activity == 0:
             sevenDayCounter += 1
         else:
             sevenDayCounter = 0
@@ -36,7 +38,7 @@ def send_discord_notif(webhook_url, message):
     try:
         webhook.send(message)
     except Exception as e:
-        print("Error during message sending to discord : ", e)
+        print("Error while sending message to discord : ", e)
 
 # Fonction to compare 2 list of squad members
 # POST : return a tuple of 3 list of squad_members
