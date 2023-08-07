@@ -1,5 +1,6 @@
 from utils.scraping import *
-import logging, sys, os, glob
+import logging, sys, os
+import logging.handlers
 from dotenv import load_dotenv
 
 from db_functions import db_funct
@@ -11,20 +12,37 @@ from datetime import datetime
 
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    # Get variable from environnement
-    logging.basicConfig(filename=dir_path+'/logfile.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
     res = load_dotenv(dotenv_path=dir_path+'/.env')
     if res == False:
         logging.critical("Create .env file before running the script! See README.md")
         sys.exit(0)
     
-    squad_url = os.getenv('SQUADRON_URL')
-    squad_name = os.getenv('SQUAD_NAME')
-    db_name = os.getenv('DB_NAME')
-    discord_webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
-    path_to_save_graph = os.getenv('path_to_save_graph')
-    path_to_save_html = os.getenv('path_to_save_html_file')
+    try: 
+        squad_url = os.environ['SQUADRON_URL']
+        squad_name = os.environ['SQUAD_NAME']
+        db_name = os.environ['DB_NAME']
+        discord_webhook_url = os.environ['DISCORD_WEBHOOK_URL']
+        path_to_save_graph = os.environ['path_to_save_graph']
+        path_to_save_html = os.environ['path_to_save_html_file']
+        
+        log_file_path = os.environ['LOGFILE_LOCATION']
+        NB_OF_LOG_FILE = int(os.environ['NB_OF_LOG_FILE'])
+    except Exception as e:
+        msg = f"One or more env variable are not set, please verify following variable : {e}"
+        print(msg)
+        exit(0)
+
+    # Get variable from environnement
+    log_handler = logging.handlers.RotatingFileHandler(log_file_path, mode='w', backupCount=NB_OF_LOG_FILE)
+    log_handler.rotator = utils.rotator
+    log_handler.namer = utils.namer
+    FORMAT = logging.Formatter('%(asctime)-15s %(levelname)s --- %(message)s')
+    log_handler.setFormatter(FORMAT)
+
+    my_logger = logging.getLogger()
+    my_logger.setLevel(logging.DEBUG)
+    my_logger.addHandler(log_handler)
 
     # Checking if we need to create the database
     if os.path.exists(db_name) == False:
@@ -90,6 +108,11 @@ def main():
 
     # Delete old HTML file
     utils.purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
+    
+    # Rotate the log
+    log_handler.doRollover()
+    
+    sys.exit(0)
     
 if __name__=="__main__":
     main()

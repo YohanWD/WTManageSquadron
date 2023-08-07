@@ -1,5 +1,5 @@
 from myclass.squad_member import squad_member_encoder
-import csv,json,os,re
+import csv,json,os,re, gzip,shutil
 
 # Remove first n first element of a list
 def divide_chunks(l, n):
@@ -27,3 +27,15 @@ def purge(dir, pattern, exlusion_file_name):
     for f in os.listdir(dir):
         if re.search(pattern, f) != None and f != exlusion_file_name:
             os.remove(os.path.join(dir, f))
+
+## Logging
+# Used to rotate logging while zipping the previous file
+def rotator(source, dest):
+    with open(source, 'rb') as f_in:
+        with gzip.open(dest, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+    os.remove(source)
+
+# Used to define log name
+def namer(name):
+    return name +".gz"
