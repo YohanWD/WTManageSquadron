@@ -1,4 +1,5 @@
 from json import JSONEncoder
+from myclass.activity import Activity
 
 
 # Each 3 day a player can have a max number of 360 activity
@@ -42,7 +43,7 @@ class Squad_member(object):
         self.pseudo = pseudo
     
     def appendActivity(self,el):
-        self.activity_hist.append(el)
+        self.activity_hist.append(Activity.from_db(el))
         
     def __iter__(self):
         return iter([self.squad_num,
