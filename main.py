@@ -68,8 +68,8 @@ def main():
     # Update database
     if already_updated == False:
         # Scrap the page
-        new_squad_members_list = correct_email_protection(scrap_squadron_profile_page(html_file_path),
-                            list_of_all_members(html_file_path))
+        new_squad_members_list = scraping.correct_email_protection(scraping.scrap_squadron_profile_page(html_file_path),
+                            scraping.list_of_all_members(html_file_path))
         # Compare with data in database
         db_squad_list = db_funct.get_all_squad_members(db_name)
         list_create_squad, list_to_update, list_leaver  = members_fct.compare_squads_members(db_squad_list,new_squad_members_list)
