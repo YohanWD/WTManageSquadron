@@ -111,7 +111,7 @@ def main():
         if members_fct.check_if_members_is_inactive(el):
             discord_msg =  discord_msg + f"This members : {el.pseudo} is inactive for more than 3 weeks\n"
     
-    members_fct.send_discord_notif(discord_webhook_url,discord_msg) # exclude new player ?
+    utils.send_discord_notif(discord_webhook_url,discord_msg) # exclude new player ?
 
     # Delete old HTML file
     utils.purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
