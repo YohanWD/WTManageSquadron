@@ -57,6 +57,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+*.gz
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -133,3 +134,4 @@ tmp_dir
 test.py
 *.db
 .DS_STORE
+*.gz

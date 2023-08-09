@@ -76,12 +76,13 @@ def main():
         db_funct.update_squad_members_activity(db_name,list_to_update)
         
         # Inserting/deleting members to DB + notifaction to discord
+        discord_msg = ""
         db_funct.insert_all_squad(db_name,list_create_squad)
         for el in list_create_squad:
-            members_fct.send_discord_notif(discord_webhook_url,f"A new member has joined squadron ! Welcome {el.pseudo}")
+            discord_msg = discord_msg + f":heart: A new member has joined squadron ! Welcome {el.pseudo}\n"
         db_funct.delete_list_of_members(db_name,list_leaver) # Keep an history somewhere ? # TODO#TOTHINK
         for el in list_leaver:
-            members_fct.send_discord_notif(discord_webhook_url,f"A member has left squadron ! Bye bye {el.pseudo}")
+            discord_msg =  discord_msg + f":broken_heart: A member has left squadron ! Bye bye {el.pseudo}\n"
 
         # Generate graph
         for el in db_funct.get_all_squad_members(db_name):
@@ -108,8 +109,9 @@ def main():
     # Check if we need to warn inactive members
     for el in db_funct.get_all_squad_members_with_activity(db_name):
         if members_fct.check_if_members_is_inactive(el):
-            msg = f"This members : {el.pseudo} is inactive for more than 3 weeks"
-            members_fct.send_discord_notif(discord_webhook_url,msg) # exclude new player ?
+            discord_msg =  discord_msg + f"This members : {el.pseudo} is inactive for more than 3 weeks\n"
+    
+    members_fct.send_discord_notif(discord_webhook_url,discord_msg) # exclude new player ?
 
     # Delete old HTML file
     utils.purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)

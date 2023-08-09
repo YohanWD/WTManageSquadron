@@ -32,6 +32,7 @@ def insert_all_squad(db_name, list_squad_members):
             query_string = f"""INSERT INTO squad_member(squad_num,pseudo,class_perso_esca,current_activity,squad_role,enter_date) VALUES ({var_string});"""
 
             cursor.execute(query_string, mylist)
+            logger.debug(f"{el.pseudo} has been added to DB")
         
         con.commit()
     except Error as e:
@@ -44,8 +45,7 @@ def insert_all_squad(db_name, list_squad_members):
 # 
 # db_name : the name of the db to update row
 # list_squad_members : a list of squad_members
-def update_squad_members_activity(db_name, list_squad_members):
-    
+def update_squad_members_activity(db_name, list_squad_members):   
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
@@ -124,6 +124,7 @@ def delete_list_of_members(db_name,list_squad_members):
                 where id=?"""
 
             cursor.execute(query_string, (el.id,))
+            logger.debug(f"{el.pseudo} has been remove from DB")
 
         con.commit()
     except Error as e:

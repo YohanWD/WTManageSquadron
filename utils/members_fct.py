@@ -1,4 +1,3 @@
-from discord import SyncWebhook
 from myclass.activity import Activity
 
 # Revoir la fonction surement
@@ -32,13 +31,6 @@ def check_if_members_is_inactive(members):
             weekInactive = 0
 
     return isInactive
-
-def send_discord_notif(webhook_url, message):
-    webhook = SyncWebhook.from_url(webhook_url)
-    try:
-        webhook.send(message)
-    except Exception as e:
-        print("Error while sending message to discord : ", e)
 
 # Fonction to compare 2 list of squad members
 # POST : return a tuple of 3 list of squad_members
