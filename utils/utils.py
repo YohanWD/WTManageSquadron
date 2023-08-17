@@ -2,6 +2,9 @@ from myclass.squad_member import squad_member_encoder
 import csv,json,os,re, gzip,shutil
 from discord import SyncWebhook
 
+import logging
+logger = logging.getLogger(__name__)
+
 # Remove first n first element of a list
 def divide_chunks(l, n):
     for i in range(0, len(l), n):
@@ -62,6 +65,7 @@ def send_discord_notif(webhook_url, message):
     webhook = SyncWebhook.from_url(webhook_url)
     try:
         for el in check_if_string_bigger_than(message,2500):
+            logger.debug(f"Sending message (size =  {len(el)}): {el}")
             webhook.send(el)
     except Exception as e:
-        print("Error while sending message to discord : ", e)
+        logger.critical("Error while sending message to discord : ", e)
