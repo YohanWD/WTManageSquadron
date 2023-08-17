@@ -65,6 +65,7 @@ def main():
         already_updated = True
 
     # Update database
+    discord_msg = ""
     if already_updated == False:
         # Scrap the page
         new_squad_members_list = scraping.correct_email_protection(scraping.scrap_squadron_profile_page(html_file_path),
@@ -76,7 +77,6 @@ def main():
         db_funct.update_squad_members_activity(db_name,list_to_update)
         
         # Inserting/deleting members to DB + notifaction to discord
-        discord_msg = ""
         db_funct.insert_all_squad(db_name,list_create_squad)
         for el in list_create_squad:
             discord_msg = discord_msg + f":heart: A new member has joined squadron ! Welcome {el.pseudo}\n"
