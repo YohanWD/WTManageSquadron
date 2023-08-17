@@ -28,6 +28,10 @@ DB_NAME=squadron.db # A name to give to the database where all your squadron inf
 # Path to save file
 path_to_save_html_file= # full path and must exist (don't add / at the end)
 path_to_save_graph= # full path and must exist (don't add / at the end)
+
+# LOGGING
+NB_OF_LOG_FILE=3 (number of log file you want to keep)
+LOGFILE_LOCATION='squadron_script.log' (ex : /tmp/wt_script.log)
 ```
 
 ```
@@ -48,12 +52,15 @@ pip install -r requirements.txt
 Bassicaly you'll need to run the main.py every day.
 For the moment, it will only send a warning when the player is inactive for 3 week (at 0 activity)
 
+### Logging system (in case of error and such)
+All the logging information are in a file define by LOGFILE_LOCATION variable, that you can change. It will create a .tar file contaning the log (use 7zip to open and have a look).
+
 
 ## TODO
 - [] : Add a treshold to define inactive (ex : if player doesn't have 700pts send alert)
 - [] : Add more option to define when a player is inactive
-- faire un logfile par jour
-- garder seulement 30 jours en db
+- [] : catching discord error
+- [] : Turning project into discord bot ? 
 
 ## Author Information
 This project was created in 2023 by YohanWD
