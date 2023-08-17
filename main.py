@@ -14,7 +14,7 @@ def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     res = load_dotenv(dotenv_path=dir_path+'/.env')
     if res == False:
-        logging.critical("Create .env file before running the script! See README.md")
+        print("Create .env file before running the script! See README.md")
         sys.exit(0)
     
     try: 
@@ -39,16 +39,16 @@ def main():
     FORMAT = logging.Formatter('%(asctime)-15s %(levelname)s --- %(message)s')
     log_handler.setFormatter(FORMAT)
 
-    my_logger = logging.getLogger()
-    my_logger.setLevel(logging.DEBUG)
+    my_logger = logging.getLogger("wt_log")
+    my_logger.setLevel(logging.INFO)
     my_logger.addHandler(log_handler)
 
     # Checking if we need to create the database
     if os.path.exists(db_name) == False:
         db_funct.create_db_schema(db_name,dir_path+'/db_functions/schema.sql')
-        print('New db is initialised')
+        my_logger.info('New db is initialised')
     else:
-        print('No need to create DB')
+        my_logger.info('No need to create DB')
 
     already_updated = False
     # Download the page if wasn't downloaded
@@ -56,12 +56,12 @@ def main():
     html_file_path = path_to_save_html + "/" + html_file_name
     if os.path.exists(html_file_path) == False:
         if download_web_page(squad_url,html_file_path) == False:
-            logging.info("Error during the page download")
+            my_logger.critical("Error during the page download")
             sys.exit(0)
         else:
-            logging.debug("HTML page was downloaded")
+            my_logger.info("HTML page was downloaded")
     else:
-        logging.debug("HTML page already downloaded, skipping insert in DB")
+        my_logger.info("HTML page already downloaded, skipping insert in DB")
         already_updated = True
 
     # Update database
