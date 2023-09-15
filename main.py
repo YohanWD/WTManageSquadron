@@ -106,7 +106,7 @@ def main():
             plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
     
     # Check if we need to warn inactive members
-    for el in db_funct.get_all_squad_members_with_activity(db_name):
+    for el in db_funct.get_all_squad_members_last_30day_of_activity(db_name):
         if members_fct.check_if_members_is_inactive(el):
             msg = f"This members : {el.pseudo} is inactive for more than 3 weeks"
             members_fct.send_discord_notif(discord_webhook_url,msg) # exclude new player ?
