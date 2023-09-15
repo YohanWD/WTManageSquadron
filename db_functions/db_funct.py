@@ -113,6 +113,30 @@ def get_all_squad_members_with_activity(db_name):
     
     return squad_members_list
 
+def get_all_squad_members_last_30day_of_activity(db_name):
+    squad_members_list = get_all_squad_members(db_name)
+    try:
+        con = sqlite3.connect(db_name)
+        con.row_factory = dict_factory
+        cursor = con.cursor()
+        logger.debug("Connection to db is established to get squad_members_activity")
+
+        cpt = 0
+        for member in squad_members_list:
+            cursor.execute("SELECT * from activity_history where squad_member_id = ? and last_update > DATETIME('now', '-30 day') ORDER BY last_update",(member.id,))
+            rows = cursor.fetchall()
+            for r in rows:
+                squad_members_list[cpt].appendActivity(r)
+            
+            cpt +=1
+
+    except Error as e:
+        logger.error(f'Db error in fct get_all_squad_members_with_activity : {str(e)}')
+    finally:
+        con.close()
+    
+    return squad_members_list
+
 
 def delete_list_of_members(db_name,list_squad_members):
     try:
