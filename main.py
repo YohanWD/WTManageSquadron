@@ -17,6 +17,7 @@ def main():
         print("Create .env file before running the script! See README.md")
         sys.exit(0)
     
+    # Get required variable from env file
     try: 
         squad_url = os.environ['SQUADRON_URL']
         squad_name = os.environ['SQUAD_NAME']
@@ -31,8 +32,17 @@ def main():
         msg = f"One or more env variable are not set, please verify following variable : {e}"
         print(msg)
         exit(0)
+        
+    # Getting optionnal value from env file
+    try:
+        inactivity_in_day = os.getenv('inactivity_in_day') # Can be None
+        inactivity_in_day = inactivity_in_day if inactivity_in_day is None else int(inactivity_in_day)
+    except Exception as e:
+        msg = f"Error with optionnal value : {e}"
+        print(msg)
+        exit(0)
 
-    # Get variable from environnement
+    # Setting up logging system
     log_handler = logging.handlers.RotatingFileHandler(log_file_path, mode='w', backupCount=NB_OF_LOG_FILE)
     log_handler.rotator = utils.rotator
     log_handler.namer = utils.namer
@@ -43,7 +53,7 @@ def main():
     my_logger.setLevel(logging.INFO)
     my_logger.addHandler(log_handler)
 
-    # Checking if we need to create the database
+    # Checking if we need to create a new the database
     if os.path.exists(db_name) == False:
         db_funct.create_db_schema(db_name,dir_path+'/db_functions/schema.sql')
         my_logger.info('New db is initialised')
@@ -76,7 +86,7 @@ def main():
 
         db_funct.update_squad_members_activity(db_name,list_to_update)
         
-        # Inserting/deleting members to DB + notifaction to discord
+        # Inserting/deleting members to DB + adding msg to discord string
         db_funct.insert_all_squad(db_name,list_create_squad)
         for el in list_create_squad:
             discord_msg = discord_msg + f":heart: A new member has joined squadron ! Welcome {el.pseudo}\n"
@@ -106,8 +116,8 @@ def main():
             plt.title(f'Activity history of {el.pseudo}')
             plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
     
-    # Check if we need to warn inactive members
-    for el in db_funct.get_all_squad_members_last_30day_of_activity(db_name):
+    # Check if we need to warn for inactive members
+    for el in db_funct.get_all_squad_members_last_x_day_of_activity(db_name,inactivity_in_day):
         if members_fct.check_if_members_is_inactive(el):
             discord_msg =  discord_msg + f"This members : {el.pseudo} is inactive for more than 3 weeks\n"
     

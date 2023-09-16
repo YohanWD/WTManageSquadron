@@ -113,17 +113,29 @@ def get_all_squad_members_with_activity(db_name):
     
     return squad_members_list
 
-def get_all_squad_members_last_30day_of_activity(db_name):
+# PRE : A valid number of day, need to be greater than 0 (default = 30)
+# VARS : 
+# - db_name -> the name of the database to gather info from
+# - nb_of_day (integer) -> Number of day to get last activity from all members
+# Return : a list of Squad_members with their last X day of activity
+def get_all_squad_members_last_x_day_of_activity(db_name,nb_of_day=30):
+    nb_of_day = 30 if nb_of_day is None or nb_of_day < 0 else nb_of_day
     squad_members_list = get_all_squad_members(db_name)
     try:
         con = sqlite3.connect(db_name)
         con.row_factory = dict_factory
         cursor = con.cursor()
-        logger.debug("Connection to db is established to get squad_members_activity")
+        logger.debug("Connection to db is established to get get_all_squad_members_last_x_day_of_activity")
 
         cpt = 0
         for member in squad_members_list:
-            cursor.execute("SELECT * from activity_history where squad_member_id = ? and last_update > DATETIME('now', '-30 day') ORDER BY last_update",(member.id,))
+            str_day = f"-{nb_of_day} day"
+            query="""
+                SELECT * from activity_history where squad_member_id = ? 
+                and last_update > DATETIME('now',?)
+                ORDER BY last_update
+            """
+            cursor.execute(query,(member.id,str_day))
             rows = cursor.fetchall()
             for r in rows:
                 squad_members_list[cpt].appendActivity(r)
