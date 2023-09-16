@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 
 from db_functions import db_funct
 
-from utils import members_fct,scraping,utils
+from utils import members_fct,scraping,utils,graph
 
-import matplotlib.pyplot as plt
 from datetime import datetime
 
 def main():
@@ -95,26 +94,8 @@ def main():
             discord_msg =  discord_msg + f":broken_heart: A member has left squadron ! Bye bye {el.pseudo}\n"
 
         # Generate graph
-        for el in db_funct.get_all_squad_members(db_name):
-            history_list = db_funct.get_activity_history_from_members(db_name, el.id)
-            x_list = []
-            y_list = []
-            for elem1, elem2 in history_list:
-                tmptime = datetime.strptime(elem2, '%Y-%m-%d %H:%M:%S')
-                x_list.append(datetime.strptime(tmptime.strftime('%Y-%m-%d'),'%Y-%m-%d'))
-                y_list.append(elem1)
-                
-            plt.clf()
-            plt.xlabel('x - time')
-            plt.ylabel('y - activity')
-            plt.ylim(0, 4000)
-            for i in range(len(x_list)):
-                plt.annotate(y_list[i], xy=(i, y_list[i]),xytext=(-12.5,7), textcoords='offset points')
-            plt.gcf().autofmt_xdate()
-            plt.plot_date(x_list,y_list,color='green', linestyle='-', linewidth = 2,
-                markerfacecolor='blue', markersize=7,xdate=True)
-            plt.title(f'Activity history of {el.pseudo}')
-            plt.savefig(f'{path_to_save_graph}/{el.pseudo}.png')
+        graph.generate_activity_graph(db_name,path_to_save_graph)
+
     
     # Check if we need to warn for inactive members
     for el in db_funct.get_all_squad_members_last_x_day_of_activity(db_name,inactivity_in_day):
