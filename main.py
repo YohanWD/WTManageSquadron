@@ -1,43 +1,25 @@
 from utils.scraping import *
 import logging, sys, os
 import logging.handlers
-from dotenv import load_dotenv
 
 from db_functions import db_funct
 
-from utils import members_fct,scraping,utils,graph
+from utils import members_fct,scraping,utils,graph,load_env_var
 
 from datetime import datetime
 
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    res = load_dotenv(dotenv_path=dir_path+'/.env')
-    if res == False:
-        print("Create .env file before running the script! See README.md")
-        sys.exit(0)
     
-    # Get required variable from env file
-    try: 
-        squad_url = os.environ['SQUADRON_URL']
-        squad_name = os.environ['SQUAD_NAME']
-        db_name = os.environ['DB_NAME']
-        discord_webhook_url = os.environ['DISCORD_WEBHOOK_URL']
-        path_to_save_graph = os.environ['path_to_save_graph']
-        path_to_save_html = os.environ['path_to_save_html_file']
-        
-        log_file_path = os.environ['LOGFILE_LOCATION']
-        NB_OF_LOG_FILE = int(os.environ['NB_OF_LOG_FILE'])
-    except Exception as e:
-        msg = f"One or more env variable are not set, please verify following variable : {e}"
-        print(msg)
-        exit(0)
-        
-    # Getting optionnal value from env file
+    # Loading all env variables
+    path_to_env = os.path.join(dir_path,".env")
     try:
-        inactivity_in_day = os.getenv('inactivity_in_day') # Can be None
-        inactivity_in_day = inactivity_in_day if inactivity_in_day is None else int(inactivity_in_day)
+        (squad_url,squad_name,db_name,discord_webhook_url,
+         path_to_save_graph,path_to_save_html,
+         log_file_path,NB_OF_LOG_FILE) = load_env_var.laod_required_vars(path_to_env)
+        nb_inac_day,min_act_req = load_env_var.load_optional_vars(path_to_env)
     except Exception as e:
-        msg = f"Error with optionnal value : {e}"
+        msg = f"Error while loading variable : {e}"
         print(msg)
         exit(0)
 
@@ -98,8 +80,8 @@ def main():
 
     
     # Check if we need to warn for inactive members
-    for el in db_funct.get_all_squad_members_last_x_day_of_activity(db_name,inactivity_in_day):
-        if members_fct.check_if_members_is_inactive(el):
+    for el in db_funct.get_all_squad_members_last_x_day_of_activity(db_name,nb_inac_day):
+        if members_fct.check_if_members_is_inactive(el,nb_inac_day,min_act_req):
             discord_msg =  discord_msg + f"This members : {el.pseudo} is inactive for more than 3 weeks\n"
     
     utils.send_discord_notif(discord_webhook_url,discord_msg) # exclude new player ?

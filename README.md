@@ -32,6 +32,11 @@ path_to_save_graph= # full path and must exist (don't add / at the end)
 # LOGGING
 NB_OF_LOG_FILE=3 (number of log file you want to keep)
 LOGFILE_LOCATION='squadron_script.log' (ex : /tmp/wt_script.log)
+
+# Optionnal paramaters
+consecutive_day_of_inactivty = 21 # Number of consecutive day below the min_activity_required (default = 21 days)
+min_activity_required = -1 # Set the minimun activity to reach before being flag as inactive (default = 0)
+#nb_day_of_grace = "0"# Number of day before actually checking if the player is inactive (default = 0) (not working)
 ```
 
 ```
@@ -49,18 +54,28 @@ pip install -r requirements.txt
 ```
 
 ## How to project Works
-Bassicaly you'll need to run the main.py every day.
-For the moment, it will only send a warning when the player is inactive for 3 week (at 0 activity)
+Basically, you'll need to run the main.py every day.
+By default, it will only send a discord message when the player is inactive for 21 consecutive days at 0 activity
+
+You can tweak the optional vars to adapt to your own liking
+
+Scnenario example : 
+You set up : 
+    - consecutive_day_of_inactivty = 5
+    - min_activity_required = 200
+We take Billy activity on the last 5 days: [360,360,360,280,150] (not flag as inactive)
+We take John : [100,100,100,0,0] (flag as inactive)
+But wait, what about Gigi who just came in and has 0 activity: [0,100,150]
+
+Note : player can gather a maximum of 360 activity point each 3 days 
+
 
 ### Logging system (in case of error and such)
 All the logging information are in a file define by LOGFILE_LOCATION variable, that you can change. It will create a .tar file contaning the log (use 7zip to open and have a look).
 
 
 ## TODO
-- [] : Add a treshold to define inactive (ex : if player doesn't have 700pts send alert)
-- [] : Add more option to define when a player is inactive
 - [] : catching discord error
-- [] : Turning project into discord bot ? 
 
 ## Author Information
 This project was created in 2023 by YohanWD

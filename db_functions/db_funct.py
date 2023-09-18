@@ -113,13 +113,13 @@ def get_all_squad_members_with_activity(db_name):
     
     return squad_members_list
 
-# PRE : A valid number of day, need to be greater than 0 (default = 30)
+# PRE : A valid number of day, need to be greater than 0 (default = 21)
 # VARS : 
 # - db_name -> the name of the database to gather info from
 # - nb_of_day (integer) -> Number of day to get last activity from all members
 # Return : a list of Squad_members with their last X day of activity
-def get_all_squad_members_last_x_day_of_activity(db_name,nb_of_day=30):
-    nb_of_day = 30 if nb_of_day is None or nb_of_day < 0 else nb_of_day
+def get_all_squad_members_last_x_day_of_activity(db_name,nb_of_day=21):
+    nb_of_day = 21 if nb_of_day is None or nb_of_day < 0 else nb_of_day
     squad_members_list = get_all_squad_members(db_name)
     try:
         con = sqlite3.connect(db_name)
