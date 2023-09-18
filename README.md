@@ -53,7 +53,7 @@ pip install -r requirements.txt
 00 23 * * * /<your_to_your_venv>/venv/bin/python main.py
 ```
 
-## How to project Works
+## How it works
 Basically, you'll need to run the main.py every day.
 By default, it will only send a discord message when the player is inactive for 21 consecutive days at 0 activity
 
@@ -63,6 +63,7 @@ Scenario example :
 You set up :  
 - consecutive_day_of_inactivty = 5
 - min_activity_required = 200  
+
 We take Billy activity on the last 5 days: [360,360,360,280,150] (not flag as inactive)  
 We take John : [100,100,100,0,0] (flag as inactive)  
 But wait, what about Gigi who just came in and has 0 activity: [0,100,150]  
