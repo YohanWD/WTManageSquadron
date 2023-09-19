@@ -32,6 +32,7 @@ def insert_all_squad(db_name, list_squad_members):
             query_string = f"""INSERT INTO squad_member(squad_num,pseudo,class_perso_esca,current_activity,squad_role,enter_date) VALUES ({var_string});"""
 
             cursor.execute(query_string, mylist)
+            logger.debug(f"{el.pseudo} has been added to DB")
         
         con.commit()
     except Error as e:
@@ -44,8 +45,7 @@ def insert_all_squad(db_name, list_squad_members):
 # 
 # db_name : the name of the db to update row
 # list_squad_members : a list of squad_members
-def update_squad_members_activity(db_name, list_squad_members):
-    
+def update_squad_members_activity(db_name, list_squad_members):   
     try:
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
@@ -113,17 +113,29 @@ def get_all_squad_members_with_activity(db_name):
     
     return squad_members_list
 
-def get_all_squad_members_last_30day_of_activity(db_name):
+# PRE : A valid number of day, need to be greater than 0 (default = 21)
+# VARS : 
+# - db_name -> the name of the database to gather info from
+# - nb_of_day (integer) -> Number of day to get last activity from all members
+# Return : a list of Squad_members with their last X day of activity
+def get_all_squad_members_last_x_day_of_activity(db_name,nb_of_day=21):
+    nb_of_day = 21 if nb_of_day is None or nb_of_day < 0 else nb_of_day
     squad_members_list = get_all_squad_members(db_name)
     try:
         con = sqlite3.connect(db_name)
         con.row_factory = dict_factory
         cursor = con.cursor()
-        logger.debug("Connection to db is established to get squad_members_activity")
+        logger.debug("Connection to db is established to get get_all_squad_members_last_x_day_of_activity")
 
         cpt = 0
         for member in squad_members_list:
-            cursor.execute("SELECT * from activity_history where squad_member_id = ? and last_update > DATETIME('now', '-30 day') ORDER BY last_update",(member.id,))
+            str_day = f"-{nb_of_day} day"
+            query="""
+                SELECT * from activity_history where squad_member_id = ? 
+                and last_update > DATETIME('now',?)
+                ORDER BY last_update
+            """
+            cursor.execute(query,(member.id,str_day))
             rows = cursor.fetchall()
             for r in rows:
                 squad_members_list[cpt].appendActivity(r)
@@ -148,6 +160,7 @@ def delete_list_of_members(db_name,list_squad_members):
                 where id=?"""
 
             cursor.execute(query_string, (el.id,))
+            logger.debug(f"{el.pseudo} has been remove from DB")
 
         con.commit()
     except Error as e:

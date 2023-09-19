@@ -1,5 +1,9 @@
 from myclass.squad_member import squad_member_encoder
 import csv,json,os,re, gzip,shutil
+from discord import SyncWebhook, HTTPException
+
+import logging
+logger = logging.getLogger("wt_log")
 
 # Remove first n first element of a list
 def divide_chunks(l, n):
@@ -39,3 +43,31 @@ def rotator(source, dest):
 # Used to define log name
 def namer(name):
     return name +".gz"
+
+# Return a list containing the string in x element smaller than the length
+def check_if_string_bigger_than(str,length):
+    if len(str)> length:
+        nbr_of_line = str.count('\n')
+        tmpstr = ""
+        for el in str.split('\n',nbr_of_line//2)[:nbr_of_line//2]:
+            tmpstr = tmpstr + el + "\n"
+        
+        list = [tmpstr] + str.split('\n',nbr_of_line//2)[(nbr_of_line//2):]
+        return list
+
+    return [str]
+
+# Function who send a message, if message is bigger than X char it will split 
+# in smaller message
+# Pre : a message needs to be separate by '\n'
+def send_discord_notif(webhook_url, message):
+    try:
+        webhook = SyncWebhook.from_url(webhook_url)
+        for el in check_if_string_bigger_than(message,2500):
+            logger.info(f"Sending message (size =  {len(el)}): {el}")
+            webhook.send(el)
+    except HTTPException as e:
+        # Error whit send , not printed in the log... (async ? impossible to catch ? )
+        logger.critical("Error while sending message to webhook : ", e)
+    except Exception as e:
+        logger.critical("Error while sending message to discord : ", e)

@@ -1,46 +1,16 @@
-from discord import SyncWebhook
-from myclass.activity import Activity
+# Info : Function to check if a members is inactive for more than X day and if he has the require activity number
+# Pre : member:Squad_member : a list has exactly the last nb_of_day_inactive day loaded
+# Post : Return false if inactity day = x and activity_treshold not respected
+def check_if_members_is_inactive(member,consecutive_day_of_inactivty=21,min_activiy_required=0):
+    if len(member.activity_hist) < consecutive_day_of_inactivty:
+        return False
+    for activity_obj in member.activity_hist:
+        if ((min_activiy_required == 0 and activity_obj.activity > 0) or
+             (activity_obj.activity >= min_activiy_required and min_activiy_required != 0)):
+            return False
+    return True
 
-# Revoir la fonction surement
-# Info : Fonction qui renvoie
-# Post : renvoie True si le joueur est inactif depuis 3 semaines, False sinon
-def check_if_members_is_inactive(members):
-    isInactive = False
-
-    # ex : 0 - 100 - 150 - 100 - 0 - 0 - 0 - 0  
-    # Par période de 3 jours avec un max de 360 pts
-    # Check par rapport a la date d'entrée dans l'escadron
-    # Joueur inactif si une période de 0 de plus de 1 semaines (7jours)
-    # Après 3 semaines inactif on dégage le membre
-
-    sevenDayCounter = 0
-    weekInactive = 0
-    
-    for activity_obj in members.activity_hist:        
-        if weekInactive >= 3:
-            isInactive = True
-
-        if sevenDayCounter != 0 and (sevenDayCounter % 7) == 0:
-            # Le joueuer est inactif depuis 1 semaine
-            # Envoie d'une alerte
-            weekInactive +=1
-
-        if activity_obj.activity == 0:
-            sevenDayCounter += 1
-        else:
-            sevenDayCounter = 0
-            weekInactive = 0
-
-    return isInactive
-
-def send_discord_notif(webhook_url, message):
-    webhook = SyncWebhook.from_url(webhook_url)
-    try:
-        webhook.send(message)
-    except Exception as e:
-        print("Error while sending message to discord : ", e)
-
-# Fonction to compare 2 list of squad members
+# Function to compare 2 list of squad members
 # POST : return a tuple of 3 list of squad_members
 # toCreate = list of new user that need to be added to database
 # toUpdate = list of user to update activity in database
