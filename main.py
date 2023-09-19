@@ -15,9 +15,9 @@ def main():
     path_to_env = os.path.join(dir_path,".env")
     try:
         (squad_url,squad_name,db_name,discord_webhook_url,
-         path_to_save_graph,path_to_save_html,
-         log_file_path,NB_OF_LOG_FILE) = load_env_var.laod_required_vars(path_to_env)
-        nb_inac_day,min_act_req = load_env_var.load_optional_vars(path_to_env)
+         path_to_save_graph,path_to_save_html) = load_env_var.laod_required_vars(path_to_env)
+        (nb_inac_day,min_act_req,
+         log_file_path,NB_OF_LOG_FILE) = load_env_var.load_optional_vars(path_to_env)
     except Exception as e:
         msg = f"Error while loading variable : {e}"
         print(msg)
