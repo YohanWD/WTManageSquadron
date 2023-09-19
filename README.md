@@ -15,28 +15,30 @@ https://warthunder.com/en/community/claninfo/Grief
 
 Rename env_example to .env and fill variable
 ```
-# Discord
+# REQUIRED
+## Discord
 DISCORD_WEBHOOK_URL = # This is a url to be able to send message to a bot in a discord channel, you can follow this tutorial : https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
 
-# Squadron
+## Squadron
 SQUADRON_URL= # This is the url link of your squadron web page
 SQUAD_NAME= # Your squadron name
 
-# DB RELATED
+## DB RELATED
 DB_NAME=squadron.db # A name to give to the database where all your squadron information will be stored
 
-# Path to save file
+## Path to save file
 path_to_save_html_file= # full path and must exist (don't add / at the end)
 path_to_save_graph= # full path and must exist (don't add / at the end)
 
-# LOGGING
-NB_OF_LOG_FILE=3 (number of log file you want to keep)
-LOGFILE_LOCATION='squadron_script.log' (ex : /tmp/wt_script.log)
-
 # Optionnal paramaters
+## Custom for activity
 consecutive_day_of_inactivty = 21 # Number of consecutive day below the min_activity_required (default = 21 days)
 min_activity_required = -1 # Set the minimun activity to reach before being flag as inactive (default = 0)
-#nb_day_of_grace = "0"# Number of day before actually checking if the player is inactive (default = 0) (not working)
+nb_day_of_grace = "0"# Number of day before actually checking if the player is inactive (default = 0)
+
+## LOGGING
+NB_OF_LOG_FILE=7 # Number of log file you want to keep (default = 7)
+LOGFILE_LOCATION='squadron_script.log' # Path to the log file. Can be a simple file name and will be create where you launched the script (default : squadron_script.log)
 ```
 
 ```

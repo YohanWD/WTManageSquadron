@@ -12,11 +12,12 @@ DB_NAME=squadron.db
 path_to_save_html_file=
 path_to_save_graph=
 
-# LOGGING
-NB_OF_LOG_FILE=7 # Number of log file you want to keep
-LOGFILE_LOCATION='squadron_script.log' # Path to the log file. Can be a simple file name and will be create where you launched the script
-
 # Optionnal paramaters
+## Custom for activity
 consecutive_day_of_inactivty = 21 # Number of consecutive day below the min_activity_required (default = 21 days)
 min_activity_required = -1 # Set the minimun activity to reach before being flag as inactive (default = 0)
 nb_day_of_grace = "0"# Number of day before actually checking if the player is inactive (default = 0)
+
+## LOGGING
+NB_OF_LOG_FILE=7 # Number of log file you want to keep (default = 7)
+LOGFILE_LOCATION='squadron_script.log' # Path to the log file. Can be a simple file name and will be create where you launched the script (default : squadron_script.log)
