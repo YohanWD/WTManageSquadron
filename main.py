@@ -83,8 +83,9 @@ def main():
     for el in db_funct.get_all_squad_members_last_x_day_of_activity(db_name,nb_inac_day):
         if members_fct.check_if_members_is_inactive(el,nb_inac_day,min_act_req):
             discord_msg =  discord_msg + f"This members : {el.pseudo} is inactive for more than 3 weeks\n"
-    
-    utils.send_discord_notif(discord_webhook_url,discord_msg) # exclude new player ?
+
+    if discord_msg != "":
+        utils.send_discord_notif(discord_webhook_url,discord_msg) # exclude new player ?
 
     # Delete old HTML file
     utils.purge(path_to_save_html,f"{squad_name}_.*.html",html_file_name)
