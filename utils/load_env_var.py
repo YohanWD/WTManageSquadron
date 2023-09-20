@@ -57,4 +57,4 @@ def load_optional_vars(abs_path_to_env_file):
     except Exception as e:
         raise e
     
-    return inactivity_in_day,min_activiy_required #,day_of_grace
+    return inactivity_in_day,min_activiy_required, log_file_path,NB_OF_LOG_FILE #day_of_grace
