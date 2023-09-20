@@ -44,18 +44,77 @@ def rotator(source, dest):
 def namer(name):
     return name +".gz"
 
-# Return a list containing the string in x element smaller than the length
-def check_if_string_bigger_than(str,length):
-    if len(str)> length:
-        nbr_of_line = str.count('\n')
-        tmpstr = ""
-        for el in str.split('\n',nbr_of_line//2)[:nbr_of_line//2]:
-            tmpstr = tmpstr + el + "\n"
-        
-        list = [tmpstr] + str.split('\n',nbr_of_line//2)[(nbr_of_line//2):]
-        return list
+# Take a long string separate in multiple line by \n and split it in smaller piece than the max length
+# Return a list of string smaller than the max length
+# EX : 
+# - "test\ntest\ntest\n",5 -> ["test\n","test\n","test\n","test\n"]
+# - "test\ntest\ntest\n",10 -> ["test\ntest\n","test\ntest\n"]
+# - "test\ntest\ntest\ntest\ntest\n",15 -> ["test\ntest\n","test\ntest\ntest\n"]
+# KNOWN ERROR, if string 2 long to be split will have issue
+# - "test\n",2 -> None + log error
+# - "test\ntest6\n",6 -> ["test\n"] + log error
+# - "test\ntest6\ntest\n",6 -> Program crash
+def discord_msg_reductor(str, max_length):
+    list_str = []
 
-    return [str]
+    if len(str) <= max_length:
+        return [str]
+    else:
+        nbr_of_line = str.count('\n')
+        if nbr_of_line <= 1 :
+            logger.critical("String too long to be split properly")
+            return None
+        firstHalf = str.split('\n',nbr_of_line//2)[:nbr_of_line//2]
+        secondHalf = str.split('\n',nbr_of_line//2)[(nbr_of_line//2):]
+        cpt = 0
+        isTooBig = False
+        goodLenghtStr,badLenghtStr = "",""
+        while cpt < len(firstHalf):
+            if isTooBig == False:
+                if len(goodLenghtStr + firstHalf[cpt] + "\n") <= max_length:
+                    goodLenghtStr = goodLenghtStr + firstHalf[cpt] + "\n"
+                else:
+                    isTooBig=True
+                    badLenghtStr = badLenghtStr + firstHalf[cpt] + "\n"
+            else:
+                badLenghtStr = badLenghtStr + firstHalf[cpt] + "\n"
+            
+            cpt += 1
+
+        list_str.append(goodLenghtStr)
+        discord_msg_reductor2(badLenghtStr+secondHalf[0],max_length,list_str)
+        
+    
+    return list_str
+
+def discord_msg_reductor2(str, max_length, list_str):
+    if len(str) <= max_length:
+        return list_str.append(str)
+    else:
+        nbr_of_line = str.count('\n')
+        if nbr_of_line <= 1 :
+            logger.critical("String too long to be split properly")
+            return None
+        firstHalf = str.split('\n',nbr_of_line//2)[:nbr_of_line//2]
+        secondHalf = str.split('\n',nbr_of_line//2)[(nbr_of_line//2):]
+        cpt = 0
+        isTooBig = False
+        goodLenghtStr,badLenghtStr = "",""
+        while cpt < len(firstHalf):
+            if isTooBig == False:
+                if len(goodLenghtStr + firstHalf[cpt] + "\n") <= max_length:
+                    goodLenghtStr = goodLenghtStr + firstHalf[cpt] + "\n"
+                else:
+                    isTooBig=True
+                    badLenghtStr = badLenghtStr + firstHalf[cpt] + "\n"
+            else:
+                badLenghtStr = badLenghtStr + firstHalf[cpt] +"\n"
+            cpt += 1
+
+        list_str.append(goodLenghtStr)
+        discord_msg_reductor2(badLenghtStr+secondHalf[0],max_length,list_str)
+    
+    return list_str
 
 # Function who send a message, if message is bigger than X char it will split 
 # in smaller message
@@ -63,7 +122,7 @@ def check_if_string_bigger_than(str,length):
 def send_discord_notif(webhook_url, message):
     try:
         webhook = SyncWebhook.from_url(webhook_url)
-        for el in check_if_string_bigger_than(message,2500):
+        for el in discord_msg_reductor(message,1950):
             logger.info(f"Sending message (size =  {len(el)}): {el}")
             webhook.send(el)
     except HTTPException as e:
