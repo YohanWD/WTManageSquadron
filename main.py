@@ -1,5 +1,6 @@
-from utils.scraping import *
-import logging, sys, os
+import logging
+import sys
+import os
 import logging.handlers
 
 from db_functions import db_funct
@@ -48,7 +49,7 @@ def main():
     my_logger.addHandler(log_handler)
 
     # Checking if we need to create a new the database
-    if os.path.exists(db_name) == False:
+    if not os.path.exists(db_name):
         db_funct.create_db_schema(db_name, dir_path + "/db_functions/schema.sql")
         my_logger.info("New db is initialised")
     else:
@@ -60,8 +61,8 @@ def main():
         squad_name + "_" + str(datetime.today().strftime("%Y-%m-%d")) + ".html"
     )
     html_file_path = path_to_save_html + "/" + html_file_name
-    if os.path.exists(html_file_path) == False:
-        if download_web_page(squad_url, html_file_path) == False:
+    if not os.path.exists(html_file_path):
+        if not scraping.download_web_page(squad_url, html_file_path):
             my_logger.critical("Error during the page download")
             sys.exit(0)
         else:
@@ -72,7 +73,7 @@ def main():
 
     # Update database
     discord_msg = ""
-    if already_updated == False:
+    if not already_updated:
         # Scrap the page
         new_squad_members_list = scraping.correct_email_protection(
             scraping.scrap_squadron_profile_page(html_file_path),

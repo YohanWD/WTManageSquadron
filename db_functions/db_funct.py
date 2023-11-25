@@ -28,11 +28,14 @@ def insert_all_squad(db_name, list_squad_members):
         con = sqlite3.connect(db_name)
         cursor = con.cursor()
         logger.debug("Connection is established to insert all squad_members")
-        # con.executemany("insert into person(firstname, lastname) values (?, ?)", persons)
         for el in list_squad_members:
             mylist = list(el)
             var_string = ", ".join("?" * len(mylist))
-            query_string = f"""INSERT INTO squad_member(squad_num,pseudo,class_perso_esca,current_activity,squad_role,enter_date) VALUES ({var_string});"""
+            query_string = (
+                "INSERT INTO squad_member"
+                "(squad_num,pseudo,current_activity,squad_role,enter_date)"
+                f" VALUES ({var_string});"
+            )
 
             cursor.execute(query_string, mylist)
             logger.debug(f"{el.pseudo} has been added to DB")
@@ -106,8 +109,12 @@ def get_all_squad_members_with_activity(db_name):
 
         cpt = 0
         for member in squad_members_list:
+            query = (
+                "SELECT * from activity_history where squad_member_id = ?"
+                " ORDER BY last_update"
+            )
             cursor.execute(
-                "SELECT * from activity_history where squad_member_id = ? ORDER BY last_update",
+                query,
                 (member.id,),
             )
             rows = cursor.fetchall()
@@ -137,14 +144,14 @@ def get_all_squad_members_last_x_day_of_activity(db_name, nb_of_day=21):
         con.row_factory = dict_factory
         cursor = con.cursor()
         logger.debug(
-            "Connection to db is established to get get_all_squad_members_last_x_day_of_activity"
+            "Connection to db is OK to get get_all_squad_members_last_x_day_of_activity"
         )
 
         cpt = 0
         for member in squad_members_list:
             str_day = f"-{nb_of_day} day"
             query = """
-                SELECT * from activity_history where squad_member_id = ? 
+                SELECT * from activity_history where squad_member_id = ?
                 and last_update > DATETIME('now',?)
                 ORDER BY last_update
             """
@@ -169,7 +176,7 @@ def delete_list_of_members(db_name, list_squad_members):
         cursor = con.cursor()
         logger.debug("Connection is established to delete squad members")
         for el in list_squad_members:
-            query_string = """Delete from squad_member
+            query_string = """DELETE from squad_member
                 where id=?"""
 
             cursor.execute(query_string, (el.id,))

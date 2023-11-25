@@ -1,4 +1,5 @@
-# Info : Function to check if a members is inactive for more than X day and if he has the require activity number
+# Info : Function to check if a members is inactive for more than X day
+# and if he has the require activity number
 # Pre : member:Squad_member : a list has exactly the last nb_of_day_inactive day loaded
 # Post : Return false if inactity day = x and activity_treshold not respected
 def check_if_members_is_inactive(

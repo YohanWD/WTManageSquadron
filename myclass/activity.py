@@ -1,6 +1,3 @@
-from json import JSONEncoder
-
-
 class Activity(object):
     def __init__(self, id=-1, activity=None, squad_member_id=None, last_update=None):
         self.id = id

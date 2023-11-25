@@ -78,9 +78,11 @@ def correct_email_protection(list_squadron_members, list_squad_members_name):
 # html_file_path = the path to dump html code in the file
 # POST : return True if the page is downloaded, False otherwise
 def download_web_page(url, html_file_path):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
-    }
+    user_agent = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1)"
+        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+    )
+    headers = {"User-Agent": user_agent}
     try:
         response = requests.get(url, headers=headers)
         with open(html_file_path, "wb") as f:

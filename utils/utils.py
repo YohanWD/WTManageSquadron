@@ -1,5 +1,10 @@
 from myclass.squad_member import squad_member_encoder
-import csv, json, os, re, gzip, shutil
+import csv
+import json
+import os
+import re
+import gzip
+import shutil
 from discord import SyncWebhook, HTTPException
 
 import logging
@@ -8,9 +13,9 @@ logger = logging.getLogger("wt_log")
 
 
 # Remove first n first element of a list
-def divide_chunks(l, n):
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
+def divide_chunks(list, n):
+    for i in range(0, len(list), n):
+        yield list[i : i + n]
 
 
 # file_path : ex (/etc/test.csv)
@@ -34,11 +39,11 @@ def write_json_file(file_path, data):
 # Delete all file matching a certain patern execpt the exclusion_file_name
 def purge(dir, pattern, exlusion_file_name):
     for f in os.listdir(dir):
-        if re.search(pattern, f) != None and f != exlusion_file_name:
+        if re.search(pattern, f) is not None and f != exlusion_file_name:
             os.remove(os.path.join(dir, f))
 
 
-## Logging
+# Logging
 # Used to rotate logging while zipping the previous file
 def rotator(source, dest):
     with open(source, "rb") as f_in:
@@ -52,7 +57,8 @@ def namer(name):
     return name + ".gz"
 
 
-# Take a long string separate in multiple line by \n and split it in smaller piece than the max length
+# Take a long string separate in multiple line by \n
+# and split it in smaller piece than the max length
 # Return a list of string smaller than the max length
 # EX :
 # - "test\ntest\ntest\n",5 -> ["test\n","test\n","test\n","test\n"]
@@ -78,7 +84,7 @@ def discord_msg_reductor(str, max_length):
         isTooBig = False
         goodLenghtStr, badLenghtStr = "", ""
         while cpt < len(firstHalf):
-            if isTooBig == False:
+            if not isTooBig:
                 if len(goodLenghtStr + firstHalf[cpt] + "\n") <= max_length:
                     goodLenghtStr = goodLenghtStr + firstHalf[cpt] + "\n"
                 else:
@@ -109,7 +115,7 @@ def discord_msg_reductor2(str, max_length, list_str):
         isTooBig = False
         goodLenghtStr, badLenghtStr = "", ""
         while cpt < len(firstHalf):
-            if isTooBig == False:
+            if not isTooBig:
                 if len(goodLenghtStr + firstHalf[cpt] + "\n") <= max_length:
                     goodLenghtStr = goodLenghtStr + firstHalf[cpt] + "\n"
                 else:

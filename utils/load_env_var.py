@@ -1,10 +1,11 @@
-import os, sys
+import os
+import sys
 from dotenv import load_dotenv
 
 
 def load_env_file(abs_path_to_env_file):
     res = load_dotenv(dotenv_path=abs_path_to_env_file)
-    if res == False:
+    if not res:
         print("Create .env file before running the script! See README.md")
         sys.exit(0)
 
@@ -20,7 +21,10 @@ def laod_required_vars(abs_path_to_env_file):
         path_to_save_html = os.environ["path_to_save_html_file"]
 
     except Exception as e:
-        msg = f"One or more env variable are not set, please verify following variable : {e}"
+        msg = (
+            "One or more env variable are not set, "
+            f"please verify following variable : {e}"
+        )
         print(msg)
         exit(0)
 
@@ -73,7 +77,8 @@ def load_optional_vars(abs_path_to_env_file):
             raise min_activiy_required_value_error
 
         # if day_of_grace < 0:
-        #     day_of_grace_value_error = ValueError('day_of_grace should be a positive number (>=0)')
+        #     day_of_grace_value_error = ValueError('day_of_grace should
+        #                                   be a positive number (>=0)')
         #     raise day_of_grace_value_error
     except Exception as e:
         raise e
