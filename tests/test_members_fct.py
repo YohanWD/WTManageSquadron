@@ -60,7 +60,25 @@ class TestInactivityFunction(unittest.TestCase):
             members_fct.check_if_members_is_inactive(self.test_member2, 200), False
         )
 
-    # activity = [0,0,0,0,...,0]
+    # activity = [360,360,360]
+    # consecutive_day : 3 , min_activity = 360
+    # inactive ? False
+    def test_active_player2(self):
+        cpt = 0
+        while cpt < 3:
+            test_act = {
+                "id": 1,
+                "activity": 360,
+                "squad_member_id": 1,
+                "last_update": "0/0/0",
+            }
+            self.test_member5.appendActivity(test_act)
+            cpt += 1
+        self.assertEqual(
+            members_fct.check_if_members_is_inactive(self.test_member5, 3, 360), False
+        )
+
+    # activity = [0,0,0,0,...,0] (22)
     # consecutive_day : 21 , min_activity = 0
     # inactive ? True
     def test_inactive_player(self):
@@ -90,10 +108,10 @@ class TestInactivityFunction(unittest.TestCase):
                 "squad_member_id": 1,
                 "last_update": "0/0/0",
             }
-            self.test_member3.appendActivity(test_act)
+            self.test_member4.appendActivity(test_act)
             cpt += 1
         self.assertEqual(
-            members_fct.check_if_members_is_inactive(self.test_member3, 3, 1000), True
+            members_fct.check_if_members_is_inactive(self.test_member4, 3, 1000), True
         )
 
 
