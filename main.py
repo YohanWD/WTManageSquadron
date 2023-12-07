@@ -115,7 +115,7 @@ def main():
         if members_fct.check_if_members_is_inactive(el, nb_inac_day, min_act_req):
             discord_msg = (
                 discord_msg
-                + f"This members : {el.pseudo} is inactive for more than 3 weeks\n"
+                + f"{el.pseudo} is inactive for more than {nb_inac_day} days\n"
             )
 
     if discord_msg != "":
