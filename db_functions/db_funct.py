@@ -33,7 +33,8 @@ def insert_all_squad(db_name, list_squad_members):
             var_string = ", ".join("?" * len(mylist))
             query_string = (
                 "INSERT INTO squad_member"
-                "(squad_num,pseudo,current_activity,squad_role,enter_date)"
+                "(squad_num,pseudo,class_perso_esca,"
+                "current_activity,squad_role,enter_date)"
                 f" VALUES ({var_string});"
             )
 
