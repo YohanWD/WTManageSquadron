@@ -23,7 +23,7 @@ def main():
             discord_webhook_url,
             path_to_save_graph,
             path_to_save_html,
-        ) = load_env_var.laod_required_vars(path_to_env)
+        ) = load_env_var.load_required_vars(path_to_env)
         (
             nb_inac_day,
             min_act_req,
@@ -45,7 +45,7 @@ def main():
     log_handler.setFormatter(FORMAT)
 
     my_logger = logging.getLogger("wt_log")
-    my_logger.setLevel(logging.INFO)
+    my_logger.setLevel(logging.DEBUG)
     my_logger.addHandler(log_handler)
 
     # Checking if we need to create a new the database
@@ -75,11 +75,13 @@ def main():
     discord_msg = ""
     if not already_updated:
         # Scrap the page
+        my_logger.debug("-- Starting web scraping")
         new_squad_members_list = scraping.correct_email_protection(
             scraping.scrap_squadron_profile_page(html_file_path),
             scraping.list_of_all_members(html_file_path),
         )
         # Compare with data in database
+        my_logger.debug("-- Comparing database members and web members")
         db_squad_list = db_funct.get_all_squad_members(db_name)
         (
             list_create_squad,
@@ -87,15 +89,19 @@ def main():
             list_leaver,
         ) = members_fct.compare_squads_members(db_squad_list, new_squad_members_list)
 
+        my_logger.debug("-- Updating squad members activity in database")
         db_funct.update_squad_members_activity(db_name, list_to_update)
 
         # Inserting/deleting members to DB + adding msg to discord string
+        my_logger.debug("-- Inserting squad members in database")
         db_funct.insert_all_squad(db_name, list_create_squad)
         for el in list_create_squad:
             discord_msg = (
                 discord_msg
                 + f":heart: A new member has joined squadron ! Welcome {el.pseudo}\n"
             )
+
+        my_logger.debug("-- Deleting squad members from database")
         db_funct.delete_list_of_members(
             db_name, list_leaver
         )  # Keep an history somewhere ? # TODO#TOTHINK
@@ -106,9 +112,11 @@ def main():
             )
 
         # Generate graph
+        my_logger.debug("-- Generating activity graph")
         graph.generate_activity_graph(db_name, path_to_save_graph)
 
     # Check if we need to warn for inactive members
+    my_logger.debug("-- Checking inactive members")
     for el in db_funct.get_all_squad_members_last_x_day_of_activity(
         db_name, nb_inac_day
     ):
@@ -118,17 +126,21 @@ def main():
                 + f"{el.pseudo} is inactive for more than {nb_inac_day} days\n"
             )
 
+    my_logger.debug("-- Sending discord message")
     if discord_msg != "":
-        utils.send_discord_notif(
-            discord_webhook_url, discord_msg
-        )  # exclude new player ?
+        discord_msg = "Script run successfully and there are no news to report."
+
+    utils.send_discord_notif(discord_webhook_url, discord_msg)  # exclude new player ?
 
     # Delete old HTML file
+    my_logger.debug("-- Purging html file")
     utils.purge(path_to_save_html, f"{squad_name}_.*.html", html_file_name)
 
     # Rotate the log
+    my_logger.debug("-- Rotating log")
     log_handler.doRollover()
 
+    my_logger.debug("-- Scripts end")
     sys.exit(0)
 
 

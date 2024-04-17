@@ -4,6 +4,10 @@ from utils import utils
 from myclass.squad_member import Squad_member
 import requests
 
+import logging
+
+logger = logging.getLogger("wt_log")
+
 
 # Function that scrap War thunder squadron html page
 # Pre : the path to of the html document
@@ -21,11 +25,16 @@ def scrap_squadron_profile_page(web_page_path):
     )  # <div class="">
 
     list_tmp = []
-
     tmp_el = squad_member_html.find_all("div")
 
     for el2 in tmp_el:
-        list_tmp.append(el2.text.split()[0])
+        el2_tab = el2.text.split()
+        if len(el2_tab) != 0:
+            list_tmp.append(el2_tab[0])  # ça bloque là
+        else:
+            logger.critical("Something went wrong while scrapping the page")
+            logger.critical(tmp_el)
+            exit(2)
 
     my_list = list(utils.divide_chunks(list_tmp[6:], 6))
 

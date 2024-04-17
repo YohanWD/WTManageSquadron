@@ -10,7 +10,7 @@ def load_env_file(abs_path_to_env_file):
         sys.exit(0)
 
 
-def laod_required_vars(abs_path_to_env_file):
+def load_required_vars(abs_path_to_env_file):
     load_env_file(abs_path_to_env_file)
     try:
         squad_url = os.environ["SQUADRON_URL"]
