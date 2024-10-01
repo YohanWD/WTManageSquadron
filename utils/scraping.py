@@ -28,14 +28,18 @@ def scrap_squadron_profile_page(web_page_path):
     tmp_el = squad_member_html.find_all("div")
 
     for el2 in tmp_el:
-        el2_tab = el2.text.split()
-        if len(el2_tab) != 0:
-            list_tmp.append(el2_tab[0])  # ça bloque là
-        else:
-            logger.critical("Something went wrong while scrapping the page")
-            logger.critical(tmp_el)
-            exit(2)
+        # Remove element noindex at it will print name 2 time
+        if el2.find("noindex") is None:
+            el2_tab = el2.text.split()
 
+            if len(el2_tab) != 0:
+                list_tmp.append(el2_tab[0])
+            else:
+                logger.critical("Something went wrong while scrapping the page")
+                logger.critical(tmp_el)
+                exit(2)
+
+    # Remove of the first six value
     my_list = list(utils.divide_chunks(list_tmp[6:], 6))
 
     squad_members = []

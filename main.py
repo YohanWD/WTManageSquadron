@@ -127,7 +127,7 @@ def main():
             )
 
     my_logger.debug("-- Sending discord message")
-    if discord_msg != "":
+    if discord_msg == "":
         discord_msg = "Script run successfully and there are no news to report."
 
     utils.send_discord_notif(discord_webhook_url, discord_msg)  # exclude new player ?
