@@ -57,7 +57,7 @@ class TestInactivityFunction(unittest.TestCase):
             {"id": 1, "activity": 360, "squad_member_id": 1, "last_update": "0/0/0"}
         )
         self.assertEqual(
-            members_fct.check_if_members_is_inactive(self.test_member2, 200), False
+            members_fct.check_if_members_is_inactive(self.test_member2, 4, 200), False
         )
 
     # activity = [360,360,360]
