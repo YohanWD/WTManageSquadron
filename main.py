@@ -37,7 +37,7 @@ def main():
 
     # Setting up logging system
     log_handler = logging.handlers.RotatingFileHandler(
-        log_file_path, mode="w", backupCount=NB_OF_LOG_FILE
+        log_file_path, mode="a", backupCount=NB_OF_LOG_FILE
     )
     log_handler.rotator = utils.rotator
     log_handler.namer = utils.namer
