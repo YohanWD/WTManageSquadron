@@ -26,15 +26,15 @@ def generate_activity_graph(db_name, path_to_save_graph):
                 textcoords="offset points",
             )
         plt.gcf().autofmt_xdate()
-        plt.plot_date(
+        plt.plot(
             x_list,
             y_list,
             color="green",
             linestyle="-",
             linewidth=2,
+            marker="o",
             markerfacecolor="blue",
             markersize=7,
-            xdate=True,
         )
         plt.title(f"Activity history of {el.pseudo}")
         plt.savefig(f"{path_to_save_graph}/{el.pseudo}.png")
