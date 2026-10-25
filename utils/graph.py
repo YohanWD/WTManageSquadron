@@ -21,7 +21,7 @@ def generate_activity_graph(db_name, path_to_save_graph):
         for i in range(len(x_list)):
             plt.annotate(
                 y_list[i],
-                xy=(i, y_list[i]),
+                xy=(x_list[i], y_list[i]),
                 xytext=(-12.5, 7),
                 textcoords="offset points",
             )
