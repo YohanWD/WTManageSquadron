@@ -15,7 +15,7 @@ path_to_save_graph=
 # Optionnal paramaters
 ## Custom for activity
 consecutive_day_of_inactivty = 21 # Number of consecutive day below the min_activity_required (default = 21 days)
-min_activity_required = -1 # Set the minimun activity to reach before being flag as inactive (default = 0)
+min_activity_required = 0 # Set the minimun activity to reach before being flag as inactive (default = 0)
 nb_day_of_grace = "0"# Number of day before actually checking if the player is inactive (default = 0)
 
 ## LOGGING

@@ -37,7 +37,7 @@ def main():
 
     # Setting up logging system
     log_handler = logging.handlers.RotatingFileHandler(
-        log_file_path, mode="w", backupCount=NB_OF_LOG_FILE
+        log_file_path, mode="a", backupCount=NB_OF_LOG_FILE
     )
     log_handler.rotator = utils.rotator
     log_handler.namer = utils.namer
@@ -80,6 +80,14 @@ def main():
             scraping.scrap_squadron_profile_page(html_file_path),
             scraping.list_of_all_members(html_file_path),
         )
+
+        # Protect the DB from deleting everyone if the downloaded page was bad
+        if len(new_squad_members_list) == 0:
+            my_logger.critical(
+                "Scraping returned 0 members, aborting to protect the database"
+            )
+            sys.exit(1)
+
         # Compare with data in database
         my_logger.debug("-- Comparing database members and web members")
         db_squad_list = db_funct.get_all_squad_members(db_name)

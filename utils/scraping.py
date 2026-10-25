@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import os
 import re
 from utils import utils
 from myclass.squad_member import Squad_member
@@ -97,11 +98,27 @@ def download_web_page(url, html_file_path):
     )
     headers = {"User-Agent": user_agent}
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=30)
+        response.raise_for_status()  # 4xx/5xx -> raises HTTPError
+    except Exception as e:
+        logger.error(f"Error while downloading {url} : {e}")
+        return False
+
+    # Checking if the page downloaded is good
+    if "squadrons-members__table" not in response.text:
+        logger.error(
+            f"Downloaded page doesn't contain the members table "
+            f"(status {response.status_code}, {len(response.content)} bytes)"
+        )
+        return False
+
+    try:
         with open(html_file_path, "wb") as f:
             f.write(response.content)
-    except Exception as e:
-        print(e)
+    except OSError as e:
+        logger.error(f"Error while saving the page to {html_file_path} : {e}")
+        if os.path.exists(html_file_path):
+            os.remove(html_file_path)  # don't leave a half-written file behind
         return False
 
     return True

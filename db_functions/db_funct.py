@@ -4,7 +4,7 @@ from sqlite3 import Error
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("wt_log")
 
 
 # create a new database based on sql script
