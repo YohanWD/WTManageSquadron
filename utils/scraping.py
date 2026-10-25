@@ -97,7 +97,7 @@ def download_web_page(url, html_file_path):
     )
     headers = {"User-Agent": user_agent}
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=30)
         with open(html_file_path, "wb") as f:
             f.write(response.content)
     except Exception as e:
