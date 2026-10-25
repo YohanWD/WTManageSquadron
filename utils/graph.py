@@ -21,20 +21,20 @@ def generate_activity_graph(db_name, path_to_save_graph):
         for i in range(len(x_list)):
             plt.annotate(
                 y_list[i],
-                xy=(i, y_list[i]),
+                xy=(x_list[i], y_list[i]),
                 xytext=(-12.5, 7),
                 textcoords="offset points",
             )
         plt.gcf().autofmt_xdate()
-        plt.plot_date(
+        plt.plot(
             x_list,
             y_list,
             color="green",
             linestyle="-",
             linewidth=2,
+            marker="o",
             markerfacecolor="blue",
             markersize=7,
-            xdate=True,
         )
         plt.title(f"Activity history of {el.pseudo}")
         plt.savefig(f"{path_to_save_graph}/{el.pseudo}.png")
