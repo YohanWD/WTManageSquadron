@@ -142,6 +142,6 @@ def send_discord_notif(webhook_url, message):
             webhook.send(el)
     except HTTPException as e:
         # Error whit send , not printed in the log... (async ? impossible to catch ? )
-        logger.critical("Error while sending message to webhook : ", e)
+        logger.critical(f"Error while sending message to webhook : {e}")
     except Exception as e:
-        logger.critical("Error while sending message to discord : ", e)
+        logger.critical(f"Error while sending message to discord : {e}")
